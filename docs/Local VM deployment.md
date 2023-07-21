@@ -55,15 +55,18 @@ ansible --version
 - Test the Ansible installation by pinging the target host:
 
 ```bash
-ansible -i inventory/dev -m ping $VPN_SERVER_NAME --user vagrant --ask-pass
+export $VPN_SERVER_NAME=wg_server
+cd playbook/
+ansible -i inventory/local -m ping $VPN_SERVER_NAME --user vagrant --ask-pass
 ```
 > This command will prompt you for the password and display a success message if the connection is established.
 
 3. Copy your public key to the repository:
 - Locate your public key file (usually named <name-of-key>.pub).
-- Copy the public key to the .ssh folder in the playbook directory:
+- Copy the public key to the `playbook/keys` folder in the playbook directory:
 ```bash
-cp ~/.ssh/<name-of-key>.pub .ssh/<name-of-key>.pub
+cd playbook/
+cp ~/.ssh/<name-of-key>.pub keys/<name-of-key>.pub
 ```
 
 By following these steps, you will have prepared your development environment and deployed a local VM using Ubuntu 22.04

@@ -1,5 +1,5 @@
 ---
-- name: Hardening Playbook
+- name: Deploy Production
   hosts: wireguard_server
   gather_facts: true
   vars_files:

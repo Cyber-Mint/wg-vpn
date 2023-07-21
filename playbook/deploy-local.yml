@@ -1,14 +1,13 @@
 ---
-- name: Hardening Playbook
-  hosts: wq_server
+- name: Deploy Local
+  hosts: wg_server
   gather_facts: true
   vars_files:
     - vars/local.yml
 
   roles:
-    # - role: run_first
-    # - role: fail2ban
-    # - role: nginx_local
-    # - role: letsencrypt
-    # - role: docker
+    - role: run_first
+    - role: fail2ban
+    - role: nginx_local
+    - role: docker
     - role: deploy
