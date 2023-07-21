@@ -3,7 +3,7 @@ version: "3.2"
 
 services:
   wg_vpn:
-    image: cybermint/wg-vpn:WG_VPN_VERSION
+    image: cybermint/wg-vpn:latest
     container_name: wg-vpn
     volumes:
       - /etc/wireguard/:/etc/wireguard/
