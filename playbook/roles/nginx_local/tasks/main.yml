@@ -1,0 +1,47 @@
+---
+- name: Ensure nginx is latest version
+  become: true
+  ansible.builtin.apt:
+    name: nginx
+    state: latest
+
+- name: Copy nginx config to server
+  become: true
+  ansible.builtin.copy:
+    src: templates/nginx.local.conf
+    dest: /etc/nginx/sites-available/default
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Create a folder for custom error pages
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/html
+    state: directory
+    mode: '0644'
+
+- name: Create symbolic link for nginx enabled sites
+  become: true
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+
+- name: Allow all access to tcp port 80
+  community.general.ufw:
+    rule: allow
+    name: "Nginx HTTP"
+  become: true
+
+- name: Allow all access to tcp port 443
+  community.general.ufw:
+    rule: allow
+    name: "Nginx HTTPS"
+  become: true
+
+- name: Start nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

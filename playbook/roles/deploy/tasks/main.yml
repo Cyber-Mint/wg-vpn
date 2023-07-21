@@ -1,0 +1,37 @@
+---
+- name: Ensure that wireguard is in acceptable state
+  ansible.builtin.include_tasks:
+    file: check-wireguard.yml
+
+- name: Format wireguard conf file with facts from deploy
+  ansible.builtin.include_tasks:
+    file: setup-wireguard-conf.yml
+
+- name: Ready docker-compose file
+  ansible.builtin.include_tasks:
+    file: setup-compose.yml
+
+- name: Bring down service, update and bring back up
+  ansible.builtin.include_tasks:
+    file: setup-docker-images.yml
+
+- name: Start Wireguard server
+  become: true
+  ansible.builtin.service:
+    name: wg-quick@wg0.service
+    enabled: true
+    state: restarted
+
+- name: Setup command pipe for BE service
+  ansible.builtin.include_tasks:
+    file: setup-command-pipe.yml
+
+- name: Align BE's server peers to host
+  ansible.builtin.include_tasks:
+    file: align-server-peers.yml
+
+- name: Print out WG_VPN_REGISTRATION_TOKEN variable
+  ansible.builtin.debug:
+    msg: >
+      WG_VPN_REGISTRATION_TOKEN is:
+      >>>>>>>>>>> {{ vpn_registration_token.stdout }} <<<<<<<<<<<

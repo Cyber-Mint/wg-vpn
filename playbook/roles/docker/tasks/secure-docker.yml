@@ -1,0 +1,21 @@
+---
+- name: Test for docker iptables config
+  become: true
+  ansible.builtin.shell: grep -c "^iptables=false" /etc/default/docker || true
+  register: secure_docker_iptables
+  changed_when: secure_docker_iptables.stdout == "0"
+
+- name: Add iptables fix for docker
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/default/docker
+    line: DOCKER_OPTS="--iptables=false"
+    create: true
+    mode: "0644"
+  when: secure_docker_iptables.stdout == "0"
+
+- name: Reload docker to activate changes
+  become: true
+  ansible.builtin.service:
+    name: docker
+    state: restarted

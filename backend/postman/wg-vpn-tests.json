@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "ad14b051-52ca-4780-8b1c-d72dfddd3f89",
+		"name": "Wg-VPN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15548578"
+	},
+	"item": [
+		{
+			"name": "Positive",
+			"item": [
+				{
+					"name": "200 Generate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /generate/ endpoint with Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.test(\"Expect Response from /generate/ to have 'detail' property\", function() {",
+									"    pm.expect(jsonData).to.have.property('detail');",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{registration_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}{{host}}generate",
+							"host": [
+								"{{protocol}}{{host}}generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OpenAPI docs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server openapi.json\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}{{host}}openapi.json",
+							"host": [
+								"{{protocol}}{{host}}openapi",
+								"json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative",
+			"item": [
+				{
+					"name": "401 Generate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /generate/ without upecifying token type Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{registration_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{protocol}}{{host}}generate",
+							"host": [
+								"{{protocol}}{{host}}generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Generate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /generate/ with incorrect Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer thisisnotthetokenvalue9876",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}{{host}}generate",
+							"host": [
+								"{{protocol}}{{host}}generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Generate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /generate/ with empty Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}{{host}}generate",
+							"host": [
+								"{{protocol}}{{host}}generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /genregistererate/ with token as param instead of header\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}{{host}}register?token={{registration_token}}",
+							"host": [
+								"{{protocol}}{{host}}register"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{registration_token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /register/ without upecifying token type Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer thisisnotthetokenvalue9876",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}{{host}}register?token={{registration_token}}",
+							"host": [
+								"{{protocol}}{{host}}register"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{registration_token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Call server /register/ with empty Auth\", () => {",
+									"    pm.expect(pm.response.code).to.be.oneOf([401]);",
+									"});",
+									"pm.test(`Response time is less than ${pm.environment.get(\"expected_response_time\")}ms`, () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.environment.get(\"expected_response_time\")));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{registration_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}{{host}}register?token=shouldbewrong",
+							"host": [
+								"{{protocol}}{{host}}register"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "shouldbewrong"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

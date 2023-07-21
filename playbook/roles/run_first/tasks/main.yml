@@ -1,0 +1,24 @@
+---
+- name: Install default packages, and update aptitude
+  ansible.builtin.include_tasks:
+    file: install-defaults.yml
+
+- name: Setup System users and groups
+  ansible.builtin.include_tasks:
+    file: setup-groups.yml
+
+- name: Setup SSH keys and access
+  ansible.builtin.include_tasks:
+    file: setup-ssh.yml
+
+- name: Setup UFW
+  ansible.builtin.include_tasks:
+    file: setup-ufw.yml
+
+- name: Setup Wireguard
+  ansible.builtin.include_tasks:
+    file: setup-wireguard.yml
+
+- name: Conclude setup and set server state
+  ansible.builtin.include_tasks:
+    file: conclude-setup.yml

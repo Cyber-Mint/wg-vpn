@@ -1,0 +1,14 @@
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+banaction = ufw
+maxretry = 2
+
+[portscan]
+enabled  = true
+filter   = portscan
+logpath  = /var/log/ufw.log
+action   = ufw-ps
+maxretry = 1

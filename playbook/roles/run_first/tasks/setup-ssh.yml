@@ -1,0 +1,25 @@
+---
+- name: List available public keys
+  ansible.builtin.debug:
+    msg: "{{ lookup('fileglob', 'keys/*') }}"
+
+- name: Install root access public keys
+  become: true
+  ansible.posix.authorized_key:
+    user: "root"
+    state: present
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+    - keys/root_*.pub
+
+- name: Display username
+  ansible.builtin.debug:
+    msg: "{{ lookup('env', 'VM_USER') or vm_user }}"
+
+- name: Install all available public keys
+  ansible.posix.authorized_key:
+    user: "{{ lookup('env', 'VM_USER') or vm_user }}"
+    state: present
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+    - keys/id_*

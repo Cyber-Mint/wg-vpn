@@ -1,0 +1,36 @@
+---
+- name: Copy align-peers.py to server
+  become: true
+  ansible.builtin.copy:
+    src: utils/align-peers.py
+    dest: /home/align-peers.py
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy align-peers.sh to server
+  become: true
+  ansible.builtin.copy:
+    src: utils/align-peers.sh
+    dest: /home/align-peers.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Ensure peers.txt exists on server
+  become: true
+  ansible.builtin.copy:
+    content: ""
+    dest: /etc/wireguard/peers.txt
+    force: false
+    group: root
+    owner: root
+    mode: '0644'
+
+- name: Run align-peers.py
+  become: true
+  ansible.builtin.shell: /home/align-peers.sh
+  args:
+    executable: /bin/bash
+  register: aligned_peers
+  changed_when: aligned_peers.rc != 0

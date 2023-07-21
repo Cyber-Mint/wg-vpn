@@ -1,0 +1,33 @@
+{
+	"id": "207f3b7d-541d-44b7-ad16-7e5f0140cedd",
+	"name": "Wg-VPN",
+	"values": [
+		{
+			"key": "protocol",
+			"value": "http://",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "host",
+			"value": "127.0.0.1:8000/",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "registration_token",
+			"value": "test1234",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "expected_response_time",
+			"value": "50",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-07-20T09:58:44.663Z",
+	"_postman_exported_using": "Postman/9.31.29"
+}

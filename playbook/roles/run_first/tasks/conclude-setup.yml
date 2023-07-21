@@ -1,0 +1,25 @@
+---
+- name: Disable password logins
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+
+- name: Restart ssh
+  become: true
+  ansible.builtin.systemd:
+    name: ssh
+    state: restarted
+
+- name: Confirm snap is correctly installed
+  become: true
+  community.general.snap:
+    name: core
+    channel: latest/stable
+
+- name: Set timezone variables
+  become: true
+  community.general.timezone:
+    name: Africa/Johannesburg

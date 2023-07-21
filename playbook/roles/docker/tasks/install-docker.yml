@@ -1,0 +1,77 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Upgrade all apt packages
+  ansible.builtin.apt:
+    upgrade: dist
+  become: true
+
+- name: Install system dependencies
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: true
+  vars:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg-agent
+
+- name: Add an apt signing key for Docker
+  become: true
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add apt repository for stable version
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Install Docker
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: true
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+- name: Install Docker-Compose
+  become: true
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: true
+  vars:
+    packages:
+      - docker-compose
+
+- name: Create config folder for doctl
+  become: true
+  ansible.builtin.file:
+    path: /root/.config
+    state: directory
+    mode: "0644"
+
+- name: Install doctl (used to auth with Digital Ocean)
+  become: true
+  community.general.snap:
+    name: doctl
+
+- name: Connect doctl with docker
+  become: true
+  ansible.builtin.command: snap connect doctl:dot-docker
+  register: docker_connect_doct
+  changed_when: docker_connect_doct.stdout == "0"

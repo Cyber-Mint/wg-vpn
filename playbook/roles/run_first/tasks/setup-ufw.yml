@@ -1,0 +1,25 @@
+---
+- name: Set logging
+  become: true
+  community.general.ufw:
+    logging: 'on'
+
+- name: UFW - Deny all other incoming traffic by default
+  become: true
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Allow OpenSSH
+  become: true
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow UDP to port 51820
+  become: true
+  community.general.ufw:
+    rule: allow
+    proto: udp
+    to_port: 51820

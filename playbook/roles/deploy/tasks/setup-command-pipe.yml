@@ -1,0 +1,39 @@
+---
+- name: Ensure pipe folder exists
+  become: true
+  ansible.builtin.file:
+    path: /home/wg-vpn
+    state: directory
+    mode: "0755"
+
+- name: Create named pipe
+  become: true
+  ansible.builtin.command:
+    cmd: mkfifo /home/wg-vpn/commandpipe
+    creates: /home/wg-vpn/commandpipe
+
+- name: Copy execpipe.sh to server
+  become: true
+  ansible.builtin.copy:
+    src: utils/execpipe.sh
+    dest: /home/
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create an entry "@reboot /home/execpipe.sh"
+  become: true
+  ansible.builtin.cron:
+    name: "Restart execpipe on reboot"
+    special_time: reboot
+    job: "/home/execpipe.sh"
+
+- name: Run execpipe in cron.d
+  become: true
+  ansible.builtin.cron:
+    name: "Run execpipe"
+    weekday: "*"
+    minute: "*"
+    hour: "*"
+    user: root
+    job: "/home/execpipe.sh"

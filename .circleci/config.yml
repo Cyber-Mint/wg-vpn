@@ -1,0 +1,175 @@
+---
+version: 2.1
+
+jobs:
+
+  integration-tests:
+    machine:
+      image: ubuntu-2204:2022.07.1
+    working_directory: ~/repo
+    resource_class: large
+    steps:
+      - checkout
+      - run: |
+          nvm install v18
+      - run:
+          name: Install Newman Using NPM
+          command: |
+            npm install -g newman
+            npm install -g newman-reporter-htmlextra
+      - run: newman run -h
+      - run:
+          name: Bring up wg-vpn
+          command: |
+            cd ~/repo/backend/quickstart/
+            docker compose up -d
+      - run:
+          name: Running postman tests
+          command: |
+            sleep 4
+            mkdir -p ~/repo/results/junit
+            sed -i '1s/^/\xef\xbb\xbf/' \
+              ~/repo/backend/postman/wg-vpn-tests.json
+            newman run -k ~/repo/backend/postman/wg-vpn-tests.json \
+              -r cli,htmlextra,junit \
+              -e ~/repo/backend/postman/wg-vpn-test-envs.json \
+              --working-dir ~/repo/backend/postman \
+              --reporter-htmlextra-export ~/repo/results \
+              --reporter-htmlextra-browserTitle "WG-VPN Test Dashboard" \
+              --reporter-htmlextra-title "WG-VPN Test Dashboard" \
+              --reporter-junit-export ~/repo/results/junit/results.xml \
+              --insecure
+      - store_artifacts:
+          path: ~/repo/results
+          destination: integration-test-results
+      - store_test_results:
+          path: ~/repo/results/junit
+      - run:
+          name: Generate wireguard swagger file
+          command: |
+            curl localhost:8000/openapi.json \
+              > ~/repo/results/wg-vpn-swagger.json
+      - store_artifacts:
+          path: ~/repo/results/wg-vpn-swagger.json
+          destination: wg-vpn-swagger.json
+
+  checkov:
+    docker:
+      - image: python@sha256:364ee1a9e029fb7b60102ae56ff52153ccc929ceab9aa387402fe738432d24cc
+    resource_class: small
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: checkov-{{ .Environment.CHECKOV_VERSION }}
+      - run:
+          name: Install Checkov
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install checkov
+      - save_cache:
+          key: checkov-{{ .Environment.CHECKOV_VERSION }}
+          paths:
+            - ".venv"
+      - run:
+          name: Run Checkov against repo
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            cd ~/repo/
+            checkov -d . --skip-check CKV_CIRCLECIPIPELINES_2,CKV_DOCKER_8,CKV_CIRCLECIPIPELINES_6
+
+  git-leaks:
+    machine:
+      image: ubuntu-2204:2022.07.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Scan for gitLeaks
+          command: |
+            docker run -v ~/repo:/path zricethezav/gitleaks:latest detect --source="/path" -v
+
+  linting:
+    docker:
+      - image: python@sha256:364ee1a9e029fb7b60102ae56ff52153ccc929ceab9aa387402fe738432d24cc
+    resource_class: small
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install Ubuntu packages
+          command: |
+            export DEBIAN_FRONTEND='noninteractive'
+            apt-get update
+            apt-get install -y yamllint
+      - restore_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+      - run:
+          name: Install Python
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install ansible ansible-lint flake8
+      - save_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+          paths:
+            - ".venv"
+      - run:
+          name: Lint playbook with ansible lint
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            ansible-lint --version
+            cd ~/repo/playbook/
+            ansible-lint
+      - run:
+          name: Lint repo with yamllint
+          command: |
+            yamllint -c .yamllint.conf .
+      - run:
+          name: Lint BackEnd with flake8
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            cd ~/repo/backend/src
+            flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  publish-wg-vpn:
+    machine:
+      image: ubuntu-2204:2022.07.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Build and tag wg-vpn image
+          command: |
+            cd ~/repo/backend
+            docker build -t $IMAGE_NAME:$CIRCLE_TAG .
+            docker tag $IMAGE_NAME:$CIRCLE_TAG $IMAGE_NAME:latest
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" \
+              --password-stdin
+            docker push $IMAGE_NAME:$CIRCLE_TAG
+            docker push $IMAGE_NAME:latest
+
+workflows:
+  version: 2
+  untagged_build_test:
+    jobs:
+      - linting
+      - integration-tests
+      - git-leaks
+      - checkov
+  tagged_deploy:
+    jobs:
+      - publish-wg-vpn:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^.*/

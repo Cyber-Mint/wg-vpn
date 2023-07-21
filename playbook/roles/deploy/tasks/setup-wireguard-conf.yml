@@ -1,0 +1,42 @@
+---
+- name: Copy Wireguard config file to server
+  become: true
+  ansible.builtin.copy:
+    src: templates/wg0.conf
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: '0040'
+
+- name: Set and reload System-control IPv4 forwarding
+  become: true
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+
+- name: Display default interface name to use
+  ansible.builtin.debug:
+    var: ansible_default_ipv4.interface
+
+- name: Replace '[default_interface]' in wg0.conf with default interface var
+  become: true
+  ansible.builtin.replace:
+    path: /etc/wireguard/wg0.conf
+    regexp: '\[default_interface\]'
+    replace: "{{ ansible_default_ipv4.interface }}"
+
+- name: Read remote Private key into var
+  become: true
+  ansible.builtin.slurp:
+    src: /etc/wireguard/private.key
+  register: private_key
+
+- name: Replace '[wireguard_private_key]' in wg0.conf
+  become: true
+  ansible.builtin.replace:
+    path: /etc/wireguard/wg0.conf
+    regexp: '\[wireguard_private_key\]'
+    replace: "{{ private_key['content'] | b64decode }}"

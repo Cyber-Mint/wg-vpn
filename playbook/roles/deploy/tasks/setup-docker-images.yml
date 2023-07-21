@@ -1,0 +1,44 @@
+---
+- name: Clear docker-compose
+  become: true
+  ansible.builtin.command: docker-compose down --remove-orphans
+  args:
+    chdir: /home/
+  register: deploy_docker_down
+  changed_when: deploy_docker_down.rc != 0
+
+- name: Pull docker compose images
+  become: true
+  ansible.builtin.command: docker-compose pull
+  args:
+    chdir: /home/
+  register: deploy_docker_pull
+  changed_when: deploy_docker_pull.rc != 0
+
+- name: Prune extraneous images
+  become: true
+  ansible.builtin.command: docker image prune -f
+  args:
+    chdir: /home/
+  register: deploy_image_prune
+  changed_when: deploy_image_prune.rc != 0
+
+- name: Start docker-compose
+  become: true
+  ansible.builtin.command: docker-compose up -d --build
+  args:
+    chdir: /home/
+  register: deploy_docker_startup
+  changed_when: deploy_docker_startup.rc != 0
+
+- name: Clear static folder
+  become: true
+  ansible.builtin.command: rm -rf /home/static
+  register: deploy_clear_static_folder
+  changed_when: deploy_clear_static_folder.rc != 0
+
+- name: Fill static folder
+  become: true
+  ansible.builtin.command: docker cp wg-vpn:/code/static /home/static
+  register: deploy_fill_static_folder
+  changed_when: deploy_fill_static_folder.rc != 0

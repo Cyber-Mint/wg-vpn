@@ -1,0 +1,47 @@
+---
+- name: Use passwordless sudo
+  become: true
+  run_once: true
+  ansible.legacy.lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Add a wheel group (where we keep sudoers)
+  become: true
+  ansible.legacy.group:
+    name: wheel
+    state: present
+
+- name: Add a docker group
+  become: true
+  ansible.legacy.group:
+    name: docker
+    state: present
+
+- name: Add a vm_user group
+  become: true
+  ansible.legacy.group:
+    name: "{{ lookup('env', 'VM_USER') or vm_user }}"
+    state: present
+
+- name: Add wheel group to sudoers
+  become: true
+  ansible.legacy.lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Add vm_user to wheel group
+  become: true
+  ansible.legacy.user:
+    name: "{{ lookup('env', 'VM_USER') or vm_user }}"
+    groups: "{{ lookup('env', 'VM_USER') or vm_user }},wheel,docker"
+    state: present
+    createhome: true
+    shell: /bin/bash
+    append: true

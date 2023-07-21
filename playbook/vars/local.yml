@@ -1,0 +1,26 @@
+---
+vm_user: vagrant
+
+# Used on first_run playbook
+vm_password: "{{ lookup('env', 'VM_PASSWORD') }}"
+
+# Useful tools for sys admin
+sys_packages: ['curl', 'ufw', 'tree', 'wireguard', 'net-tools']
+
+# Default docker version
+vpn_version: "{{ lookup('env', 'LOCAL_VPN_VERSION') }}"
+
+# Endpoints / IPs your clients go through the VPN to
+vpn_allowed_ips: "{{ lookup('env', 'LOCAL_VPN_ALLOWED_IPS') }}"
+
+# Your wireguard server's IP
+vpn_endpoint: "{{ lookup('env', 'LOCAL_VPN_ENDPOINT') }}"
+
+# Used by letsencrypt, to obtain SSL certificates
+vpn_server_name: "{{ lookup('env', 'LOCAL_VPN_SERVER_NAME') }}"
+
+# Used to notify important info by Certbot. Set to administrator email address
+vpn_webserver_email: "{{ lookup('env', 'LOCAL_VPN_WEBSERVER_EMAIL') }}"
+
+# Used by FASTAPI. The domain name and protocol of your server
+vpn_server_host: "{{ lookup('env', 'LOCAL_VPN_SERVER_HOST') }}"

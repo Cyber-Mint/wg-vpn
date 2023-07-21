@@ -1,0 +1,64 @@
+---
+- name: Copy over Backend Docker-compose file
+  become: true
+  ansible.builtin.copy:
+    src: docker-compose/docker-compose.yml
+    dest: /home/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Generate wireguard server token
+  ansible.builtin.shell:
+    cmd: set -o pipefail && tr -dc A-Za-z0-9 </dev/urandom | head -c 25; echo ''
+    executable: /bin/bash
+  register: vpn_registration_token
+  changed_when: true
+
+- name: Write WG_VPN_REGISTRATION_TOKEN to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: ^(      - WG_VPN_REGISTRATION_TOKEN=).*
+    replace: \g<1>{{ vpn_registration_token.stdout }}
+
+- name: Write WG_VPN_ENDPOINT to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: ^(      - WG_VPN_ENDPOINT=).*
+    replace: \g<1>{{ vpn_endpoint }}
+
+- name: Write WG_VPN_ALLOWED_IPS to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: ^(      - WG_VPN_ALLOWED_IPS=).*
+    replace: \g<1>{{ vpn_allowed_ips }}
+
+- name: Read remote Public key into var
+  become: true
+  ansible.builtin.slurp:
+    src: /etc/wireguard/public.key
+  register: public_key
+
+- name: Write WG_VPN_SERVER_PUBLIC_KEY to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: ^(      - WG_VPN_SERVER_PUBLIC_KEY=).*
+    replace: \g<1>{{ public_key['content'] | b64decode }}
+
+- name: Write WG_VPN_SERVER_HOST to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: ^(      - WG_VPN_SERVER_HOST=).*
+    replace: \g<1>{{ vpn_server_host }}
+
+- name: Write WG_VPN_VERSION to docker-compose
+  become: true
+  ansible.builtin.replace:
+    path: /home/docker-compose.yml
+    regexp: 'WG_VPN_VERSION'
+    replace: '{{ vpn_version }}'

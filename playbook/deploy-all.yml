@@ -1,0 +1,14 @@
+---
+- name: Hardening Playbook
+  hosts: wireguard_server
+  gather_facts: true
+  vars_files:
+    - vars/prod.yml
+
+  roles:
+    - role: run_first
+    - role: fail2ban
+    - role: nginx
+    - role: letsencrypt
+    - role: docker
+    - role: deploy

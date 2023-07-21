@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VPN Server</title>
+    <link rel="stylesheet" href="../static/styles.css" />
+  </head>
+  <body>
+    <div class="error-wrapper">
+      <div class="error">
+        The token you provided was incorrect! Try again.
+        <span class="hide-error">&times;</span>
+      </div>
+    </div>
+    <div id="app">
+      <div class="main">
+        <div class="title-generate-wrapper">
+          <img src="../static/images/wg-logo.jpeg" alt="wg-logo" />
+          <div class="title-generate-block">
+            <div class="title-block">
+              <div class="title">WireGuard-VPN</div>
+              <div class="title-description">
+                A no-nosense self-provisioning VPN server for dev teams
+              </div>
+            </div>
+            <div class="generate-block">
+              <input
+                type="text"
+                id="token-field"
+                maxlength="25"
+                placeholder="Paste your registration token here..."
+              />
+              <button id="generate">Generate</button>
+            </div>
+          </div>
+        </div>
+        <div class="curl-wrapper">
+          <div>Copy and execute the following script on your local pc:</div>
+          <div id="curl-field" class="curl-field"></div>
+          <div>
+            This will validate your token, download the wg-vpn installer,
+            install and bind your wg-vpn to this server.
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <div class="github">
+          <img src="../static/images/github.png" alt="github" />
+          <a class="github-link" href="https://github.com/cyber-mint/wg-vpn"
+            >https://github.com/cyber-mint/wg-vpn</a
+          >
+        </div>
+        <div class="cyber-mint">
+          Copyright &#169; 2023, Cyber-Mint (Pty) Ltd, Provided under MIT
+          License
+          <img src="../static/images/cm-logo-whitespace.png" alt="cyber-mint" />
+        </div>
+      </div>
+    </div>
+    <script>
+      const generateButton = document.querySelector("#generate");
+      const tokenField = document.querySelector("#token-field");
+      const curlField = document.querySelector("#curl-field");
+      const error = document.querySelector(".error-wrapper");
+      const hideError = document.querySelector(".hide-error");
+
+      const generateCurl = async () => {
+        try {
+          const response = await fetch('{{ host }}/generate', {
+            headers: {Authorization: `Bearer ${tokenField.value}`}
+          });
+          const curl = await response.json();
+          curlField.innerHTML = curl.detail;
+        } catch(e) {
+          error.style.display = 'flex';
+        }
+      };
+
+      const closeErroWindow = () => {
+        error.style.display = 'none';
+      }
+
+      generateButton.addEventListener("click", generateCurl);
+      hideError.addEventListener("click", closeErroWindow);
+    </script>
+  </body>
+</html>
