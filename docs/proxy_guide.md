@@ -59,6 +59,11 @@ sudo systemctl restart nginx
 By following these steps and dropping packets at the Nginx level, you can enhance the security of your Nginx server and
 ensure that only authorized VPN users can access the protected resources.
 
+<br>
+
+---
+[HOME](../README.md) | [Technical Documentation](./README.md)
+
 ---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
-Supplied under [MIT License](../LICENSE)
+Supplied under [MIT License](./LICENSE)

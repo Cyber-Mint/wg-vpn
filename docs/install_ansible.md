@@ -38,5 +38,8 @@ ansible [core 2.12.10]
 <br>
 
 ---
+[HOME](../README.md) | [Technical Documentation](./README.md)
+
+---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
 Supplied under [MIT License](./LICENSE)

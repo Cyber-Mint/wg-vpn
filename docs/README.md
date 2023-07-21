@@ -1,15 +1,18 @@
 # Technical Documentation
 
-1. [Local Deployment](./Local%20Deploy.md) - for how to deploy to a local virtual machine
-2. [Production Deploy](./Production%20Deploy.md) - for how to deploy to a production cloud server
+1. [Local Deployment](./local_deploy.md) - for how to deploy to a local virtual machine
+2. [Production Deployment](./prod_deploy.md) - for how to deploy to a production cloud server
 
 ## Technical Guides
-1. [Setting up a VM](./vbox_guide.md) with virtual box
-2. [Installing Ansible](./Install%20Ansible.md)
-3. [Nginx Proxy Guide](./Proxy%20Config%20Guide%20for%20VPN%20Access.md)
+1. [Setting up a local VM](./vbox_guide.md)
+2. [Installing Ansible](./install_ansible.md)
+3. [Nginx Proxy Guide](./proxy_guide.md)
 
 
 <br>
+
+---
+[HOME](../README.md) | [Technical Documentation](./README.md)
 
 ---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>

@@ -28,7 +28,7 @@ Please refer to the [technical documentation](docs/README.md) for how to deploy 
 The Wireguard VPN service allows users (also known as peers) to self-register and configure their client instances to make use of the `wg-vpn` virtual private network.
 
 ### Setup Procedure for Clients
-- Users self-register by visiting https://vpn.my.domain. The user will presented with the following screen.
+- Users self-register by visiting `vpn.my.domain`. The user will presented with the following screen.
 
 ![vpn-my.domain](docs/vpn.my.domain.png)
 

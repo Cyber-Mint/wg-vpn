@@ -52,7 +52,7 @@ vpn.my.domain | SUCCESS => {
     "ping": "pong"
 }
  ```
-NOw, that we know we can reach out production server with `ansible-playbook` correctly, we can go ahead and run the playbook for the first time.
+Now, that we know we can reach our production server with `ansible-playbook` correctly, we can go ahead and run the playbook for the first time.
 
 ```bash
 ANSIBLE_NOCOWS=1 ansible-playbook deploy.yml -i inventory/prod -u root --private-key ~/.ssh/id_rsa
@@ -79,5 +79,8 @@ ANSIBLE_NOCOWS=1 ansible-playbook deploy-all.yml -i inventory/prod -u vagrant --
 <br>
 
 ---
+[HOME](../README.md) | [Technical Documentation](./README.md)
+
+---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
-Supplied under [MIT License](../LICENSE)
+Supplied under [MIT License](./LICENSE)
