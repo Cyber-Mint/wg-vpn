@@ -9,7 +9,7 @@ Before proceeding with the deployment, ensure you have the following:
 - Virtualization software installed (e.g. VirtualBox, VMware)
 - Ubuntu 22.04 LTS server image
 - SSH-server installed on the virtual machine
-- [Ansible](./Install%20Ansible.md) installed on your local development environment
+- [Ansible](./install_ansible.md) installed on your local development environment
 
 This technical documentation provides instructions for running the playbook locally to deploy and configure the environment on a local virtual machine. Follow the steps below to run the playbook and perform the deployment tasks.
 
@@ -54,13 +54,21 @@ Before running the playbook ensure that your inventory files `playbook/inventory
 192.168.122.169
 ```
 
-Enter the root or vagrant password and sudo password when prompted:
+and then copy your public key to the repository
+
+- locate your public key file e.g. `~/.ssh/id_rsa.pub`
+- copy your public key to the `playbook/keys` folder in the playbook directory as follows:
+  
+```bash
+cp ~/.ssh/id_rsa.pub playbook/keys/id_rsa.pub
+```
+
+Now you may execute the playbook.
 
 ```bash
 ANSIBLE_NOCOWS=1 ansible-playbook deploy-local.yml -i inventory/local -u $VM_USER --ask-pass --ask-become-pass
 ```
-
-This command will use SSH and sudo access to connect to the target VM and execute the playbook.
+Enter the root or vagrant password and sudo password when prompted.  This command will use SSH and sudo access to connect to the target VM and execute the playbook.
 
 > If you have multiple SSH keys, specify the path to your SSH key using the `--key-file` option.
 
@@ -73,6 +81,8 @@ ANSIBLE_NOCOWS=1 ansible-playbook deploy-local.yml -i inventory/local -u vagrant
 ```
 
 This command will use your SSH key for authentication and sudo access, without prompting for passwords.
+
+> The local deployment differs from the production deployment in that:<br>- it does not use a FQDN but rather just an IP address<br>- it therefore cannot run `letsencrypt` as consequentially runs as "http" not "https".<br>
 
 ### Deployment Alternatives
 
@@ -90,23 +100,3 @@ ANSIBLE_NOCOWS=1 ansible-playbook deploy-local.yml -i inventory/local -u vagrant
 ---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
 Supplied under [MIT License](./LICENSE)
-
-
-
-
-### Deployment Steps
-
-
-
-
-
-
-3. Copy your public key to the repository:
-- Locate your public key file (usually named <name-of-key>.pub).
-- Copy the public key to the `playbook/keys` folder in the playbook directory:
-```bash
-cd playbook/
-cp ~/.ssh/<name-of-key>.pub keys/<name-of-key>.pub
-```
-
-

@@ -22,7 +22,7 @@ export VPN_SERVER_HOST=https://vpn.my.domain
 ```
 > Note: Allowed IPs are the individual IP addresses, comma separated such as `132.23.442.234, 132.233.42.24, 8.8.8.8` or IP subnet masks such as `10.50.0.0/24` or all addresses using `0.0.0.0/0` that clients will access via the VPN.
 
-- [Install `ansible`](./Install%20Ansible.md) and required dependencies for running the playbook. 
+- [Install `ansible`](./install_ansible.md) and required dependencies for running the playbook. 
 - Run the playbook using the instructions below, which will automatically:
   - Harden the VPN server
   - Add a **vagrant** user
