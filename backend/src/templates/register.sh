@@ -10,7 +10,9 @@ server_public_key="{{ server_public_key }}"
 client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
 endpoint="{{ endpoint }}"
-tunnels="{{ tunnels }}"
+initial_tunnels="{{ tunnels }}"
+tunnels_file="tunnels.txt"
+
 
 # Config file
 _file=$wireguard_package_path/wg0.conf
