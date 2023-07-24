@@ -11,7 +11,7 @@ client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
 endpoint="{{ endpoint }}"
 initial_tunnels="{{ tunnels }}"
-tunnels_file="tunnels.txt"
+tunnels_file=$wireguard_package_path/tunnels.txt
 
 
 # Config file
@@ -45,6 +45,13 @@ initialize_tunnels() {
 save_tunnels() {
     # Save the content of the tunnels into the tunnels_file
     printf "%s" "$tunnels" > "$tunnels_file"
+}
+
+add_to_tunnels() {
+    # Append the parameter to the tunnel
+    tunnels="$tunnels$1\n"
+    # Update the tunnels_file
+    save_tunnels
 }
 
 connect() {
