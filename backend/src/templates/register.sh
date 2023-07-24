@@ -73,8 +73,10 @@ END
 show() {
   # Read the variables from the list_file and display with formatting
   index=1
+  echo "wg-vpn routes"
+  echo "====================="
   while IFS= read -r line; do
-    echo "[$index] $line"
+    echo " [$index] $line"
     index=$((index + 1))
   done <"$tunnels_file"
 }
