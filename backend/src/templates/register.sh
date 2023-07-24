@@ -249,6 +249,10 @@ while [ $# -gt 0 ]; do
     # Enable quiet mode with no terminal output, except for failure indications
     _quiet="1"
     ;;
+  "show")
+    show
+    exit 0
+    ;;
   "uninstall")
     # Uninstall WireGuard
     uninstall
