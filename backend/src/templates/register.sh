@@ -34,6 +34,14 @@ displayStatus() {
   sudo wg
 }
 
+initialize_tunnels() {
+    # Read the contents of the tunnels_file into the list
+    if [ -f "tunnels_file" ]; then
+        # If the file exists, read its contents into the list
+        tunnel_list=$(cat "tunnels_file")
+    fi
+}
+
 connect() {
   # This function is responsible for connecting to the WireGuard VPN.
 
