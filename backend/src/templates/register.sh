@@ -78,9 +78,11 @@ connect() {
   else
     sudo wg-quick up "$_file"
   fi
-  for tunnel in "${tunnels[@]}"; do
-    eval "sudo ip route change $tunnel via $client_address"
-  done
+  while IFS= read -r _tunnel; do
+    eval "sudo ip route change $_tunnel via $client_address"
+  done <<END
+$tunnels
+END
 }
 
 disconnect() {
