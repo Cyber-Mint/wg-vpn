@@ -40,9 +40,9 @@ connect() {
   else
     sudo wg-quick up "$_file"
   fi
-  for word in "${list[@]}"
+  for tunnel in "${tunnels[@]}"
   do
-      eval "sudo ip route change $word via $client_address"
+      eval "sudo ip route change $tunnel via $client_address"
   done
   # Fill this code block from what is determined by the BE (will add the 'ip route change' commands)
   {{ ip_route_changes }}
