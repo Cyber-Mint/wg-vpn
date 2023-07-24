@@ -71,12 +71,12 @@ END
 }
 
 show() {
-    # Read the variables from the list_file and display with formatting
-    index=1
-    while IFS= read -r line; do
-        echo "[$index] $line"
-        index=$((index + 1))
-    done < "$tunnels_file"
+  # Read the variables from the list_file and display with formatting
+  index=1
+  while IFS= read -r line; do
+    echo "[$index] $line"
+    index=$((index + 1))
+  done <"$tunnels_file"
 }
 
 connect() {
