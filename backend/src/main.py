@@ -127,7 +127,7 @@ async def register(request: Request, token: Annotated[str, Depends(oauth2_scheme
             "server_public_key": settings.WG_VPN_SERVER_PUBLIC_KEY,
             "allowed_ips": settings.WG_VPN_ALLOWED_IPS,
             "wireguard_package_path": settings.WG_VPN_PACKAGE_PATH,
-            "ip_route_changes": get_ip_route_change_block(client_address),
+            "ip_route_changes": get_ip_route_change_block(),
             "wireguard_package_version": settings.PROJECT_VERSION,
         }
 
