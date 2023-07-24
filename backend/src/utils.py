@@ -163,22 +163,23 @@ def release_lock_file() -> None:
         logger.info(f"Released the lock file: {lock_file}")
 
 
-def get_ip_route_change_block(client_address: str) -> str:
+def get_ip_route_change_block() -> str:
     """
-    Generate the IP route change commands for each allowed IP in WG_VPN_ALLOWED_IPS.
-
-    Args:
-        client_address (str): The client's IP address.
+    Generate a list of IPs to construct encrypted tunnels for. 
+    This list is interpreted with /bin/sh
 
     Returns:
-        str: The generated IP route change commands.
+        str: A list of IPs, in /bin/sh format.
 
     Example:
-        >>> get_ip_route_change_block("10.0.0.2")
-        '\n  sudo ip route change 192.168.0.0/24 via 10.0.0.2\n  sudo ip route change 10.1.0.0/16 via 10.0.0.2'
+        >>> get_ip_route_change_block()
+        '("192.168.0.0" "10.1.0.0")'
     """
-    ip_route_changes = ""
-    for allowed_ip in settings.WG_VPN_ALLOWED_IPS.split(','):
-        ip_route_changes += f"  sudo ip route change {allowed_ip} via {client_address}\n"
-
-    return ip_route_changes
+    ip_route_changes = '('
+    allowed_ips = settings.WG_VPN_ALLOWED_IPS.split(',')
+    for allowed_ip in allowed_ips:
+        ip_route_changes += f'"{allowed_ip}" '
+    if len(allowed_ips) >= 2:
+        return allowed_ips[:-2] + ")"
+    else:
+        return allowed_ips + ")"
