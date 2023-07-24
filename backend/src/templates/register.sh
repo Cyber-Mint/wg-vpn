@@ -13,7 +13,6 @@ endpoint="{{ endpoint }}"
 initial_tunnels="{{ tunnels }}"
 tunnels_file=$wireguard_package_path/tunnels.txt
 
-
 # Config file
 _file=$wireguard_package_path/wg0.conf
 
@@ -35,40 +34,40 @@ displayStatus() {
 }
 
 initialize_tunnels() {
-    # Read the contents of the tunnels_file into the list
-    if [ -f "tunnels_file" ]; then
-        # If the file exists, read its contents into the list
-        tunnels=$(cat "tunnels_file")
-    fi
+  # Read the contents of the tunnels_file into the list
+  if [ -f "tunnels_file" ]; then
+    # If the file exists, read its contents into the list
+    tunnels=$(cat "tunnels_file")
+  fi
 }
 
 save_tunnels() {
-    # Save the content of the tunnels into the tunnels_file
-    printf "%s" "$tunnels" > "$tunnels_file"
+  # Save the content of the tunnels into the tunnels_file
+  printf "%s" "$tunnels" >"$tunnels_file"
 }
 
 add_to_tunnels() {
-    # Append the parameter to the tunnel
-    tunnels="$tunnels$1\n"
-    # Update the tunnels_file
-    save_tunnels
+  # Append the parameter to the tunnel
+  tunnels="$tunnels$1\n"
+  # Update the tunnels_file
+  save_tunnels
 }
 
 remove_from_tunnels() {
-    # Create a new tunnels without the element to be removed
-    new_tunnels=""
-    while IFS= read -r _tunnel; do
-        if [ "$_tunnel" != "$1" ]; then
-            [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels"$'\n'
-            new_tunnels="$new_tunnels$_tunnel"
-        fi
-    done << END
+  # Create a new tunnels without the element to be removed
+  new_tunnels=""
+  while IFS= read -r _tunnel; do
+    if [ "$_tunnel" != "$1" ]; then
+      [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels"$'\n'
+      new_tunnels="$new_tunnels$_tunnel"
+    fi
+  done <<END
 $tunnels
 END
-    # Assign the new_tunnels back to the tunnels variable
-    tunnels="$new_tunnels"
-    # Update the tunnels_file
-    save_list
+  # Assign the new_tunnels back to the tunnels variable
+  tunnels="$new_tunnels"
+  # Update the tunnels_file
+  save_list
 }
 
 connect() {
@@ -79,9 +78,8 @@ connect() {
   else
     sudo wg-quick up "$_file"
   fi
-  for tunnel in "${tunnels[@]}"
-  do
-      eval "sudo ip route change $tunnel via $client_address"
+  for tunnel in "${tunnels[@]}"; do
+    eval "sudo ip route change $tunnel via $client_address"
   done
 }
 
