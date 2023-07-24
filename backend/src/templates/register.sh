@@ -54,6 +54,23 @@ add_to_tunnels() {
     save_tunnels
 }
 
+remove_from_tunnels() {
+    # Create a new tunnels without the element to be removed
+    new_tunnels=""
+    while IFS= read -r _tunnel; do
+        if [ "$_tunnel" != "$1" ]; then
+            [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels"$'\n'
+            new_tunnels="$new_tunnels$_tunnel"
+        fi
+    done << END
+$tunnels
+END
+    # Assign the new_tunnels back to the tunnels variable
+    tunnels="$new_tunnels"
+    # Update the tunnels_file
+    save_list
+}
+
 connect() {
   # This function is responsible for connecting to the WireGuard VPN.
 
