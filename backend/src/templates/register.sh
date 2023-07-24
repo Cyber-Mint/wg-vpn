@@ -10,6 +10,7 @@ server_public_key="{{ server_public_key }}"
 client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
 endpoint="{{ endpoint }}"
+tunnels="{{ tunnels }}"
 
 # Config file
 _file=$wireguard_package_path/wg0.conf
@@ -39,7 +40,10 @@ connect() {
   else
     sudo wg-quick up "$_file"
   fi
-
+  for word in "${list[@]}"
+  do
+      eval "sudo ip route change $word via $client_address"
+  done
   # Fill this code block from what is determined by the BE (will add the 'ip route change' commands)
   {{ ip_route_changes }}
 }
