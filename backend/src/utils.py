@@ -163,7 +163,7 @@ def release_lock_file() -> None:
         logger.info(f"Released the lock file: {lock_file}")
 
 
-def get_ip_route_change_block() -> str:
+def get_tunnel_ips() -> str:
     """
     Generate a list of IPs to construct encrypted tunnels for. 
     This list is interpreted with /bin/sh
@@ -172,14 +172,14 @@ def get_ip_route_change_block() -> str:
         str: A list of IPs, in /bin/sh format.
 
     Example:
-        >>> get_ip_route_change_block()
+        >>> get_tunnel_ips()
         '("192.168.0.0" "10.1.0.0")'
     """
-    ip_route_changes = '('
+    tunnel_ips = '('
     allowed_ips = settings.WG_VPN_ALLOWED_IPS.split(',')
     for allowed_ip in allowed_ips:
-        ip_route_changes += f'"{allowed_ip}" '
+        tunnel_ips += f'"{allowed_ip}" '
     if len(allowed_ips) >= 2:
-        return allowed_ips[:-2] + ")"
+        return tunnel_ips[:-2] + ")"
     else:
-        return allowed_ips + ")"
+        return tunnel_ips + ")"

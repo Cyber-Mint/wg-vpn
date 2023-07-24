@@ -12,9 +12,9 @@ from fastapi.security import OAuth2PasswordBearer
 
 from settings import settings
 
-from utils import \
-    (determine_next_private_ip, generate_key_pair, store_client, obtain_lock_file, release_lock_file,
-     get_ip_route_change_block)
+from utils import (
+    determine_next_private_ip, generate_key_pair, store_client, obtain_lock_file, release_lock_file, get_tunnel_ips
+)
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -127,7 +127,7 @@ async def register(request: Request, token: Annotated[str, Depends(oauth2_scheme
             "server_public_key": settings.WG_VPN_SERVER_PUBLIC_KEY,
             "allowed_ips": settings.WG_VPN_ALLOWED_IPS,
             "wireguard_package_path": settings.WG_VPN_PACKAGE_PATH,
-            "ip_route_changes": get_ip_route_change_block(),
+            "tunnels": get_tunnel_ips(),
             "wireguard_package_version": settings.PROJECT_VERSION,
         }
 
