@@ -98,4 +98,4 @@ In the applet, then:
 
 ---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
-Supplied under [MIT License](./LICENSE)
+Supplied under [MIT License](../LICENSE)
