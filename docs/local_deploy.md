@@ -99,4 +99,4 @@ ANSIBLE_NOCOWS=1 ansible-playbook deploy-local.yml -i inventory/local -u vagrant
 
 ---
 Copyright &copy; 2023, Cyber-Mint (Pty) Ltd<br>
-Supplied under [MIT License](./LICENSE)
+Supplied under [MIT License](../LICENSE)
