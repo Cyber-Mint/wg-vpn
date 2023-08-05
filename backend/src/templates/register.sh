@@ -10,7 +10,6 @@ server_public_key="{{ server_public_key }}"
 client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
 endpoint="{{ endpoint }}"
-initial_tunnels="{{ tunnels }}"
 tunnels_file=$wireguard_package_path/tunnels.txt
 
 # Config file
@@ -35,7 +34,7 @@ displayStatus() {
 
 initialize_tunnels() {
   # Read the contents of the tunnels_file into the list
-  if [ -f "tunnels_file" ]; then
+  if [ -f "$tunnels_file" ]; then
     # If the file exists, read its contents into the list
     tunnels=$(cat "$tunnels_file")
   fi
@@ -43,14 +42,20 @@ initialize_tunnels() {
 
 save_tunnels() {
   # Save the content of the tunnels into the tunnels_file
-  printf "%s" "$tunnels" >"$tunnels_file"
+  echo "$tunnels" >"$tunnels_file"
 }
 
 add_to_tunnels() {
-  # Append the parameter to the tunnel
-  tunnels="$tunnels$1\n"
-  # Update the tunnels_file
-  save_tunnels
+  # Check if $1 is not in tunnels
+  if ! echo "$tunnels" | grep -q "$1"; then
+    # Add the new routes to existing tunnels
+    tunnels="$tunnels\n$1"
+    # Update the tunnels_file
+    save_tunnels
+  else
+    echo "$1 is already in tunnels."
+    exit 1
+  fi
 }
 
 remove_from_tunnels() {
@@ -202,6 +207,7 @@ displayHelp() {
   echo "    status          show status of wg-vpn service"
   echo "    uninstall       uninstall wg-vpn"
   echo "    show            show destination IPs reached via VPN"
+  echo "    add             add a new route to tunnels"
   echo ""
   echo "  [OPTION]:"
   echo "    -q, --quiet     produces no terminal output,"
@@ -250,8 +256,8 @@ while [ $# -gt 0 ]; do
     _quiet="1"
     ;;
   "add")
-    initial_tunnels
-    add_to_tunnels
+    initialize_tunnels
+    add_to_tunnels $2
     exit 0
     ;;
   "show")
