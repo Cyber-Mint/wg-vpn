@@ -2,25 +2,31 @@
 vm_user: vagrant
 
 # Used on first_run playbook
-vm_password: "{{ lookup('env', 'VM_PASSWORD') }}"
+vm_password: "{{ lookup('ansible.builtin.env', 'VM_PASSWORD') }}"
 
 # Useful tools for sys admin
 sys_packages: ['curl', 'ufw', 'tree', 'wireguard', 'net-tools']
 
 # Default docker version
-vpn_version: "{{ lookup('env', 'VPN_VERSION') }}"
+vpn_version: "{{ lookup('ansible.builtin.env', 'VPN_VERSION', default='latest') }}"
 
 # Endpoints / IPs your clients go through the VPN to
-vpn_allowed_ips: "{{ lookup('env', 'VPN_ALLOWED_IPS') }}"
+vpn_allowed_ips: "{{ lookup('ansible.builtin.env', 'VPN_ALLOWED_IPS') }}"
 
 # Your wireguard server's IP
-vpn_endpoint: "{{ lookup('env', 'VPN_ENDPOINT') }}"
+vpn_endpoint: "{{ lookup('ansible.builtin.env', 'VPN_ENDPOINT') }}"
+
+# Your wireguard package path for the peers. this folder is placed in the user's $HOME dir
+vpn_package_path: ".wireguard"
+
+# Your wireguard server's private interface IP. Preset to 10.8.0.1
+vpn_server_interface_private_address: "10.8.0.1"
 
 # Used by letsencrypt, to obtain SSL certificates
-vpn_server_name: "{{ lookup('env', 'VPN_SERVER_NAME') }}"
+vpn_server_name: "{{ lookup('ansible.builtin.env', 'VPN_SERVER_NAME') }}"
 
 # Used to notify important info by Certbot. Set to administrator email address
-vpn_webserver_email: "{{ lookup('env', 'VPN_WEBSERVER_EMAIL') }}"
+vpn_webserver_email: "{{ lookup('ansible.builtin.env', 'VPN_WEBSERVER_EMAIL') }}"
 
 # Used by FASTAPI. The domain name and protocol of your server
-vpn_server_host: "{{ lookup('env', 'VPN_SERVER_HOST') }}"
+vpn_server_host: "{{ lookup('ansible.builtin.env', 'VPN_SERVER_HOST') }}"
