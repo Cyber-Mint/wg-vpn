@@ -63,7 +63,7 @@ remove_from_tunnels() {
   new_tunnels=""
   while IFS= read -r _tunnel; do
     if [ "$_tunnel" != "$1" ]; then
-      [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels"$'\n'
+      [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels\n"
       new_tunnels="$new_tunnels$_tunnel"
     fi
   done <<END
@@ -72,7 +72,7 @@ END
   # Assign the new_tunnels back to the tunnels variable
   tunnels="$new_tunnels"
   # Update the tunnels_file
-  save_list
+  save_tunnels
 }
 
 show() {
