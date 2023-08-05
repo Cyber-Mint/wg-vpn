@@ -100,7 +100,6 @@ connect() {
 $tunnels
 END
 }
-
 disconnect() {
   # This function is responsible for disconnecting from the WireGuard VPN.
 
@@ -243,6 +242,7 @@ while [ $# -gt 0 ]; do
     ;;
   "up" | "UP")
     # Connect to the WireGuard VPN
+    initialize_tunnels
     connect
     exit 0
     ;;
@@ -260,7 +260,13 @@ while [ $# -gt 0 ]; do
     add_to_tunnels $2
     exit 0
     ;;
+  "remove")
+    initialize_tunnels
+    remove_from_tunnels $2
+    exit 0
+    ;;
   "show")
+    # Enable quiet mode with no terminal output, except for failure indications
     show
     exit 0
     ;;
