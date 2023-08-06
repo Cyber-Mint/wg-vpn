@@ -37,6 +37,9 @@ initialize_tunnels() {
   if [ -f "$tunnels_file" ]; then
     # If the file exists, read its contents into the list
     tunnels=$(cat "$tunnels_file")
+  else
+    touch "$tunnels_file"
+    echo "{{ initial_tunnels }}" >"$tunnels_file"
   fi
 }
 
@@ -50,6 +53,7 @@ add_to_tunnels() {
   if ! echo "$tunnels" | grep -q "$1"; then
     # Add the new routes to existing tunnels
     tunnels="$tunnels\n$1"
+    >>>>>>>>>>>>>>>>>>> Update in wg0.conf <<<<<<<<<<<<<<<<<<<<<<<<
     # Update the tunnels_file
     save_tunnels
   else
