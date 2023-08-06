@@ -165,7 +165,7 @@ def release_lock_file() -> None:
 
 def get_tunnel_ips() -> str:
     """
-    Generate a list of IPs to construct encrypted tunnels for. 
+    Generate a list of IPs to construct encrypted tunnels for.
     This list is interpreted with /bin/sh
 
     Returns:
@@ -173,13 +173,9 @@ def get_tunnel_ips() -> str:
 
     Example:
         >>> get_tunnel_ips()
-        '("192.168.0.0" "10.1.0.0")'
+        '1.1.1.1\n2.2.2.2\n3.3.3.3\n4.4.4.4\n5.5.5.5\n'
     """
-    tunnel_ips = '('
     allowed_ips = settings.WG_VPN_ALLOWED_IPS.split(',')
-    for allowed_ip in allowed_ips:
-        tunnel_ips += f'"{allowed_ip}" '
-    if len(allowed_ips) >= 2:
-        return tunnel_ips[:-2] + ")"
-    else:
-        return tunnel_ips + ")"
+    tunnel_ips = '\n'.join(allowed_ips)
+    return tunnel_ips + '\n'
+
