@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import logging
 
@@ -176,6 +177,14 @@ def get_tunnel_ips() -> str:
         '1.1.1.1\n2.2.2.2\n3.3.3.3\n4.4.4.4\n5.5.5.5\n'
     """
     allowed_ips = settings.WG_VPN_ALLOWED_IPS.split(',')
-    tunnel_ips = '\n'.join(allowed_ips)
-    return tunnel_ips + '\n'
+    valid_ips = []
 
+    ip_pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+
+    for allowed_ip in allowed_ips:
+        stripped_ip = allowed_ip.strip()
+        if ip_pattern.match(stripped_ip):
+            valid_ips.append(stripped_ip)
+
+    tunnel_ips = '\n'.join(valid_ips)
+    return tunnel_ips + '\n'
