@@ -186,5 +186,5 @@ def get_tunnel_ips() -> str:
         if ip_pattern.match(stripped_ip):
             valid_ips.append(stripped_ip)
 
-    tunnel_ips = '\n'.join(valid_ips)
-    return tunnel_ips + '\n'
+    tunnel_ips = '\\n'.join(valid_ips)
+    return tunnel_ips
