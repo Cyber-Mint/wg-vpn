@@ -39,7 +39,8 @@ initialize_tunnels() {
     tunnels=$(cat "$tunnels_file")
   else
     touch "$tunnels_file"
-    echo "{{ initial_tunnels }}" >"$tunnels_file"
+    tunnels="{{ initial_tunnels }}"
+    save_tunnels
   fi
 }
 
@@ -299,6 +300,7 @@ if [ ! "$FILE" -ef "$wireguard_package_path/wg-vpn" ]; then
 
   # Perform installation
   install
+  initialize_tunnels
 
   # Create "$wireguard_package_path/wg-vpn" file and copy the script contents to it
   touch "$wireguard_package_path/wg-vpn"
