@@ -67,6 +67,9 @@ initialize_tunnels() {
 save_tunnels() {
   # Save the content of the tunnels into the tunnels_file
   echo "$tunnels" >"$tunnels_file"
+  escaped_tunnels=$(echo "$tunnels" | sed 's/\//\\\//g')
+  output=$(echo "$escaped_tunnels" | tr '\n ' '\n, ')
+  show
 }
 
 add_to_tunnels() {
