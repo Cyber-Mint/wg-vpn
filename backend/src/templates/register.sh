@@ -59,8 +59,8 @@ initialize_tunnels() {
     tunnels=$(cat "$tunnels_file")
   else
     touch "$tunnels_file"
-    tunnels="{{ initial_tunnels }}"
-    save_tunnels
+    echo "{{ initial_tunnels }}" > "$tunnels_file"
+    initialize_tunnels
   fi
 }
 
