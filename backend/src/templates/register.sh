@@ -26,6 +26,7 @@ displayVersion() {
 
 alignTunnels(){
   # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before preup and connect.
+  
   tunnels=$(cat "$tunnels_file")
   _allowed_ips=""
   while IFS= read -r _tunnel; do
@@ -54,8 +55,10 @@ displayStatus() {
 
 initialize_tunnels() {
   # Read the contents of the tunnels_file into the list
+
   if [ -f "$tunnels_file" ]; then
     # If the file exists, read its contents into the list
+
     tunnels=$(cat "$tunnels_file")
   else
     touch "$tunnels_file"
@@ -66,6 +69,7 @@ initialize_tunnels() {
 
 save_tunnels() {
   # Save the content of the tunnels into the tunnels_file
+
   echo "$tunnels" >"$tunnels_file"
   escaped_tunnels=$(echo "$tunnels" | sed 's/\//\\\//g')
   output=$(echo "$escaped_tunnels" | tr '\n ' '\n, ')
@@ -74,10 +78,11 @@ save_tunnels() {
 
 add_to_tunnels() {
   # Check if $1 is not in tunnels
+
   if ! echo "$tunnels" | grep -q "$1"; then
     # Add the new routes to existing tunnels
     tunnels="$tunnels\n$1"
-    >>>>>>>>>>>>>>>>>>> Update in wg0.conf <<<<<<<<<<<<<<<<<<<<<<<<
+
     # Update the tunnels_file
     save_tunnels
   else
