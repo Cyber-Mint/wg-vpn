@@ -17,7 +17,7 @@
 - name: Replace 'VPN_SERVER_NAME' in conf with domain name
   become: true
   ansible.builtin.replace:
-    path: /home/docker-compose.yml
+    path: /etc/nginx/sites-enabled/default
     regexp: 'VPN_SERVER_NAME'
     replace: '{{ vpn_server_name }}'
 
