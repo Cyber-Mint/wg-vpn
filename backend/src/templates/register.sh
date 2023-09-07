@@ -289,8 +289,13 @@ while [ $# -gt 0 ]; do
       exit 0
     elif [ "$2" = "remove" ]; then
       remove_from_tunnels "$3"
+      exit 0
+    elif [ "$2" = "rm" ]; then
+      remove_from_tunnels "$3"
+      exit 0
     elif [ "$2" = "--show" ]; then
       show
+      exit 0
     fi
     echo "Unknown parameter passed: $2"
     exit 1
