@@ -24,6 +24,26 @@ displayVersion() {
   echo ""
 }
 
+alignTunnels(){
+  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before preup and connect.
+  tunnels=$(cat "$tunnels_file")
+  _allowed_ips=""
+  while IFS= read -r _tunnel; do
+    _tunnel="${_tunnel#"${_tunnel%%[![:space:]]*}"}"
+    _tunnel="${_tunnel%"${_tunnel##*[![:space:]]}"}"
+    if [ -z "$_allowed_ips" ]; then
+      _allowed_ips="$_tunnel"
+    else
+      _allowed_ips="$_allowed_ips, $_tunnel"
+    fi
+  done <<END
+    $tunnels
+END
+  allowed_ips="$_allowed_ips"
+  rm $_file
+  create_config_file
+}
+
 displayStatus() {
   # This function displays the status of the WireGuard VPN connection.
 
