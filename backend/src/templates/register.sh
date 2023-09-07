@@ -258,6 +258,10 @@ while [ $# -gt 0 ]; do
     connect
     exit 0
     ;;
+  "-f" | "--file")
+    _wgconf="$2"
+    shift
+    ;;
   "down" | "DOWN")
     # Disconnect from the WireGuard VPN
     disconnect
@@ -272,12 +276,17 @@ while [ $# -gt 0 ]; do
     add_to_tunnels $2
     exit 0
     ;;
+  "reload")
+    disconnect
+    connect
+    exit 0
+    ;;
   "remove")
     initialize_tunnels
     remove_from_tunnels $2
     exit 0
     ;;
-  "show")
+  "--show")
     # Enable quiet mode with no terminal output, except for failure indications
     show
     exit 0
