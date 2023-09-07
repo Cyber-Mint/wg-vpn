@@ -153,13 +153,6 @@ install_wireguard() {
   fi
 }
 
-setup_public_key() {
-  # This function sets up the public key for the WireGuard VPN configuration.
-
-  echo "$public_key" | tee "$wireguard_package_path/public.key" >/dev/null
-  echo "Public key setup"
-}
-
 create_config_file() {
   # This function creates or recreates the configuration file for the WireGuard VPN.
 
