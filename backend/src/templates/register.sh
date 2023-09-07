@@ -53,6 +53,26 @@ displayStatus() {
   sudo wg
 }
 
+createPostUpScript() {
+  echo "#!/bin/sh"
+  echo 'echo "    _________        ___.                             _____  .__        __            "'
+  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "'
+  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "'
+  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "'
+  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "'
+  echo 'echo "            \/\/          \/     \/                        \/        \/               "'
+  echo 'wireguard_package_path='"$wireguard_package_path"''
+  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt'
+  echo 'client_address="'$client_address'"'
+  echo 'tunnels=$(cat "$tunnels_file")'
+  echo 'while IFS= read -r _tunnel; do'
+  echo '    echo [#] ip -4 route change $_tunnel via $client_address'
+  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"'
+  echo 'done <<END'
+  echo '    $tunnels'
+  echo 'END'
+}
+
 initialize_tunnels() {
   # Read the contents of the tunnels_file into the list
 
