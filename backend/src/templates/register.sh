@@ -26,7 +26,7 @@ displayVersion() {
 
 alignTunnels(){
   # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before preup and connect.
-  
+
   tunnels=$(cat "$tunnels_file")
   _allowed_ips=""
   while IFS= read -r _tunnel; do
@@ -122,16 +122,12 @@ show() {
 connect() {
   # This function is responsible for connecting to the WireGuard VPN.
 
+  alignTunnels
   if [ "$_quiet" -eq 1 ]; then
     sudo wg-quick up "$_file" >/dev/null
   else
     sudo wg-quick up "$_file"
   fi
-  while IFS= read -r _tunnel; do
-    eval "sudo ip route change $_tunnel via $client_address"
-  done <<END
-$tunnels
-END
 }
 disconnect() {
   # This function is responsible for disconnecting from the WireGuard VPN.
