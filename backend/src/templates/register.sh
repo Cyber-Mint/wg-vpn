@@ -55,12 +55,19 @@ displayStatus() {
 createPostUpScript() {
   echo "#!/bin/sh" >"$wireguard_package_path/postUp.sh"
   echo "" >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "    _________        ___.                             _____  .__        __            "' >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "' >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "' >>"$wireguard_package_path/postUp.sh"
-  echo 'echo "            \/\/          \/     \/                        \/        \/               "' >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    _________        ___.                             _____  .__        __            "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "            \/\/          \/     \/                        \/        \/               "' \
+    >>"$wireguard_package_path/postUp.sh"
   echo "" >>"$wireguard_package_path/postUp.sh"
   echo 'wireguard_package_path='"$wireguard_package_path"'' >>"$wireguard_package_path/postUp.sh"
   echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt' >>"$wireguard_package_path/postUp.sh"
