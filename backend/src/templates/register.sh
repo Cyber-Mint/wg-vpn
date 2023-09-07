@@ -153,13 +153,6 @@ install_wireguard() {
   fi
 }
 
-setup_private_key() {
-  # This function sets up the private key for the WireGuard VPN configuration.
-
-  echo "$private_key" | tee "$wireguard_package_path/private.key" >/dev/null
-  echo "Private key setup"
-}
-
 setup_public_key() {
   # This function sets up the public key for the WireGuard VPN configuration.
 
