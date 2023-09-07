@@ -166,9 +166,10 @@ create_config_file() {
   # [Interface] section
   echo "[Interface]" >>"$file"
   echo "SaveConfig = false" >>"$file"
-  echo "PrivateKey = $(cat "$wireguard_package_path/private.key")" >>"$file"
+  echo "PrivateKey = $private_key" >>"$file"
   echo "Address = $client_address" >>"$file"
   echo "MTU = 1500" >>"$file"
+  echo "PostUp = $wireguard_package_path/postup.sh" >>"$file"
   echo "" >>"$file"
 
   # [Peer] section
@@ -187,10 +188,6 @@ install() {
   mkdir -p "$wireguard_package_path"
 
   install_wireguard
-
-  setup_private_key
-
-  setup_public_key
 
   create_config_file
 }
