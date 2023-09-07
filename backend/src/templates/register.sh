@@ -339,6 +339,9 @@ if [ ! "$FILE" -ef "$wireguard_package_path/wg-vpn" ]; then
 
   # Perform installation
   install
+  
+  createPostUpScript
+
   initialize_tunnels
 
   # Create "$wireguard_package_path/wg-vpn" file and copy the script contents to it
