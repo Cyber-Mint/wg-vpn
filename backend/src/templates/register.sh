@@ -282,6 +282,19 @@ while [ $# -gt 0 ]; do
     displayVersion
     exit 0
     ;;
+  "route")
+    initialize_tunnels
+    if [ "$2" = "add" ]; then
+      add_to_tunnels "$3"
+      exit 0
+    elif [ "$2" = "remove" ]; then
+      remove_from_tunnels "$3"
+    elif [ "$2" = "--show" ]; then
+      show
+    fi
+    echo "Unknown parameter passed: $2"
+    exit 1
+    ;;
   "up" | "UP")
     # Connect to the WireGuard VPN
     initialize_tunnels
@@ -301,24 +314,9 @@ while [ $# -gt 0 ]; do
     # Enable quiet mode with no terminal output, except for failure indications
     _quiet="1"
     ;;
-  "add")
-    initialize_tunnels
-    add_to_tunnels $2
-    exit 0
-    ;;
   "reload")
     disconnect
     connect
-    exit 0
-    ;;
-  "remove")
-    initialize_tunnels
-    remove_from_tunnels $2
-    exit 0
-    ;;
-  "--show")
-    # Enable quiet mode with no terminal output, except for failure indications
-    show
     exit 0
     ;;
   "uninstall")
