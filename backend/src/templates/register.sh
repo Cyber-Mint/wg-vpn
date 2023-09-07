@@ -5,7 +5,6 @@
 # Variables
 wireguard_package_path="$HOME/{{ wireguard_package_path }}"
 private_key="{{ private_key }}"
-public_key="{{ public_key }}"
 server_public_key="{{ server_public_key }}"
 client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
@@ -25,7 +24,7 @@ displayVersion() {
 }
 
 alignTunnels(){
-  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before postup and connect.
+  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before post-up and connect.
 
   tunnels=$(cat "$tunnels_file")
   _allowed_ips=""
@@ -53,27 +52,27 @@ displayStatus() {
   sudo wg
 }
 
-createPostUpScript() {
-  touch "$wireguard_package_path/postup.sh"
+createpostUpScript() {
+  touch "$wireguard_package_path/postUp.sh"
   echo "#!/bin/sh"
-  echo 'echo "    _________        ___.                             _____  .__        __            "' >"$wireguard_package_path/postup.sh"
-  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' >"$wireguard_package_path/postup.sh"
-  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' >"$wireguard_package_path/postup.sh"
-  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "'>"$wireguard_package_path/postup.sh"
-  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "'>"$wireguard_package_path/postup.sh"
-  echo 'echo "            \/\/          \/     \/                        \/        \/               "'>"$wireguard_package_path/postup.sh"
-  echo 'wireguard_package_path='"$wireguard_package_path"''>"$wireguard_package_path/postup.sh"
-  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt'>"$wireguard_package_path/postup.sh"
-  echo 'client_address="'$client_address'"'>"$wireguard_package_path/postup.sh"
-  echo 'tunnels=$(cat "$tunnels_file")'>"$wireguard_package_path/postup.sh"
-  echo 'while IFS= read -r _tunnel; do'>"$wireguard_package_path/postup.sh"
-  echo '    echo [#] ip -4 route change $_tunnel via $client_address'>"$wireguard_package_path/postup.sh"
-  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"'>"$wireguard_package_path/postup.sh"
-  echo 'done <<END'>"$wireguard_package_path/postup.sh"
-  echo '    $tunnels'>"$wireguard_package_path/postup.sh"
-  echo 'END'>"$wireguard_package_path/postup.sh"
-  echo "">"$wireguard_package_path/postup.sh"
-  sudo chmod +x "$wireguard_package_path/postup.sh"
+  echo 'echo "    _________        ___.                             _____  .__        __            "' >"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' >"$wireguard_package_path/postUp.sh"
+  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' >"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "'>"$wireguard_package_path/postUp.sh"
+  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "'>"$wireguard_package_path/postUp.sh"
+  echo 'echo "            \/\/          \/     \/                        \/        \/               "'>"$wireguard_package_path/postUp.sh"
+  echo 'wireguard_package_path='"$wireguard_package_path"''>"$wireguard_package_path/postUp.sh"
+  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt'>"$wireguard_package_path/postUp.sh"
+  echo 'client_address="'$client_address'"'>"$wireguard_package_path/postUp.sh"
+  echo 'tunnels=$(cat "$tunnels_file")'>"$wireguard_package_path/postUp.sh"
+  echo 'while IFS= read -r _tunnel; do'>"$wireguard_package_path/postUp.sh"
+  echo '    echo [#] ip -4 route change $_tunnel via $client_address'>"$wireguard_package_path/postUp.sh"
+  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"'>"$wireguard_package_path/postUp.sh"
+  echo 'done <<END'>"$wireguard_package_path/postUp.sh"
+  echo '    $tunnels'>"$wireguard_package_path/postUp.sh"
+  echo 'END'>"$wireguard_package_path/postUp.sh"
+  echo "">"$wireguard_package_path/postUp.sh"
+  sudo chmod +x "$wireguard_package_path/postUp.sh"
 }
 
 initialize_tunnels() {
@@ -94,8 +93,6 @@ save_tunnels() {
   # Save the content of the tunnels into the tunnels_file
 
   echo "$tunnels" >"$tunnels_file"
-  escaped_tunnels=$(echo "$tunnels" | sed 's/\//\\\//g')
-  output=$(echo "$escaped_tunnels" | tr '\n ' '\n, ')
   show
 }
 
@@ -192,7 +189,7 @@ create_config_file() {
   echo "PrivateKey = $private_key" >>"$file"
   echo "Address = $client_address" >>"$file"
   echo "MTU = 1500" >>"$file"
-  echo "PostUp = $wireguard_package_path/postup.sh" >>"$file"
+  echo "PostUp = $wireguard_package_path/postUp.sh" >>"$file"
   echo "" >>"$file"
 
   # [Peer] section
@@ -282,7 +279,7 @@ while [ $# -gt 0 ]; do
     exit 0
     ;;
   "-f" | "--file")
-    _wgconf="$2"
+    _file="$2"
     shift
     ;;
   "down" | "DOWN")
