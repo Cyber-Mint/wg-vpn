@@ -25,7 +25,7 @@ displayVersion() {
 }
 
 alignTunnels(){
-  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before preup and connect.
+  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before postup and connect.
 
   tunnels=$(cat "$tunnels_file")
   _allowed_ips=""
@@ -54,23 +54,26 @@ displayStatus() {
 }
 
 createPostUpScript() {
+  touch "$wireguard_package_path/postup.sh"
   echo "#!/bin/sh"
-  echo 'echo "    _________        ___.                             _____  .__        __            "'
-  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "'
-  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "'
-  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "'
-  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "'
-  echo 'echo "            \/\/          \/     \/                        \/        \/               "'
-  echo 'wireguard_package_path='"$wireguard_package_path"''
-  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt'
-  echo 'client_address="'$client_address'"'
-  echo 'tunnels=$(cat "$tunnels_file")'
-  echo 'while IFS= read -r _tunnel; do'
-  echo '    echo [#] ip -4 route change $_tunnel via $client_address'
-  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"'
-  echo 'done <<END'
-  echo '    $tunnels'
-  echo 'END'
+  echo 'echo "    _________        ___.                             _____  .__        __            "' >"$wireguard_package_path/postup.sh"
+  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' >"$wireguard_package_path/postup.sh"
+  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' >"$wireguard_package_path/postup.sh"
+  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "'>"$wireguard_package_path/postup.sh"
+  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "'>"$wireguard_package_path/postup.sh"
+  echo 'echo "            \/\/          \/     \/                        \/        \/               "'>"$wireguard_package_path/postup.sh"
+  echo 'wireguard_package_path='"$wireguard_package_path"''>"$wireguard_package_path/postup.sh"
+  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt'>"$wireguard_package_path/postup.sh"
+  echo 'client_address="'$client_address'"'>"$wireguard_package_path/postup.sh"
+  echo 'tunnels=$(cat "$tunnels_file")'>"$wireguard_package_path/postup.sh"
+  echo 'while IFS= read -r _tunnel; do'>"$wireguard_package_path/postup.sh"
+  echo '    echo [#] ip -4 route change $_tunnel via $client_address'>"$wireguard_package_path/postup.sh"
+  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"'>"$wireguard_package_path/postup.sh"
+  echo 'done <<END'>"$wireguard_package_path/postup.sh"
+  echo '    $tunnels'>"$wireguard_package_path/postup.sh"
+  echo 'END'>"$wireguard_package_path/postup.sh"
+  echo "">"$wireguard_package_path/postup.sh"
+  sudo chmod +x "$wireguard_package_path/postup.sh"
 }
 
 initialize_tunnels() {
