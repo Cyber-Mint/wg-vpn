@@ -5,11 +5,11 @@
 # Variables
 wireguard_package_path="$HOME/{{ wireguard_package_path }}"
 private_key="{{ private_key }}"
-public_key="{{ public_key }}"
 server_public_key="{{ server_public_key }}"
 client_address="{{ client_address }}"
 allowed_ips="{{ allowed_ips }}"
 endpoint="{{ endpoint }}"
+tunnels_file=$wireguard_package_path/tunnels.txt
 
 # Config file
 _file=$wireguard_package_path/wg0.conf
@@ -23,6 +23,27 @@ displayVersion() {
   echo ""
 }
 
+alignTunnels(){
+  # This function rebuilds the wg0.conf file (and particular the AllowedIps) to before post-up and connect.
+
+  tunnels=$(cat "$tunnels_file")
+  _allowed_ips=""
+  while IFS= read -r _tunnel; do
+    _tunnel="${_tunnel#"${_tunnel%%[![:space:]]*}"}"
+    _tunnel="${_tunnel%"${_tunnel##*[![:space:]]}"}"
+    if [ -z "$_allowed_ips" ]; then
+      _allowed_ips="$_tunnel"
+    else
+      _allowed_ips="$_allowed_ips, $_tunnel"
+    fi
+  done <<END
+    $tunnels
+END
+  allowed_ips="$_allowed_ips"
+  rm $_file
+  create_config_file
+}
+
 displayStatus() {
   # This function displays the status of the WireGuard VPN connection.
 
@@ -31,19 +52,113 @@ displayStatus() {
   sudo wg
 }
 
+createPostUpScript() {
+  echo "#!/bin/sh" >"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    _________        ___.                             _____  .__        __            "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \_   ___ \___.__.\_ |__   ___________            /     \ |__| _____/  |_          "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    /    \  \<   |  | | __ \_/ __ \_  __ \  ______  /  \ /  \|  |/    \   __\         "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "    \     \___\___  | | \_\ \  ___/|  | \/ /_____/ /    Y    \  |   |  \  |           "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "     \______  / ____| |___  /\___  >__|            \____|__  /__|___|  /__| (Pty) Ltd "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo 'echo "            \/\/          \/     \/                        \/        \/               "' \
+    >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo 'wireguard_package_path='"$wireguard_package_path"'' >>"$wireguard_package_path/postUp.sh"
+  echo 'tunnels_file='"$wireguard_package_path"'/tunnels.txt' >>"$wireguard_package_path/postUp.sh"
+  echo 'client_address="'$client_address'"' >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo 'tunnels=$(cat "$tunnels_file")' >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  echo 'while IFS= read -r _tunnel; do' >>"$wireguard_package_path/postUp.sh"
+  echo '    echo [#] ip -4 route change $_tunnel via $client_address' >>"$wireguard_package_path/postUp.sh"
+  echo '    eval "sudo ip -4 route change $_tunnel via $client_address"' >>"$wireguard_package_path/postUp.sh"
+  echo 'done <<END' >>"$wireguard_package_path/postUp.sh"
+  echo '    $tunnels' >>"$wireguard_package_path/postUp.sh"
+  echo 'END' >>"$wireguard_package_path/postUp.sh"
+  echo "" >>"$wireguard_package_path/postUp.sh"
+  sudo chmod +x "$wireguard_package_path/postUp.sh"
+}
+
+initialize_tunnels() {
+  # Read the contents of the tunnels_file into the list
+
+  if [ -f "$tunnels_file" ]; then
+    # If the file exists, read its contents into the list
+
+    tunnels=$(cat "$tunnels_file")
+  else
+    touch "$tunnels_file"
+    echo "{{ initial_tunnels }}" > "$tunnels_file"
+    initialize_tunnels
+  fi
+}
+
+save_tunnels() {
+  # Save the content of the tunnels into the tunnels_file
+
+  echo "$tunnels" >"$tunnels_file"
+  show
+}
+
+add_to_tunnels() {
+  # Check if $1 is not in tunnels
+
+  if ! echo "$tunnels" | grep -q "$1"; then
+    # Add the new routes to existing tunnels
+    tunnels="$tunnels\n$1"
+
+    # Update the tunnels_file
+    save_tunnels
+  else
+    echo "$1 is already in tunnels."
+    exit 1
+  fi
+}
+
+remove_from_tunnels() {
+  # Create a new tunnels without the element to be removed
+  new_tunnels=""
+  while IFS= read -r _tunnel; do
+    if [ "$_tunnel" != "$1" ]; then
+      [ -n "$new_tunnels" ] && new_tunnels="$new_tunnels\n"
+      new_tunnels="$new_tunnels$_tunnel"
+    fi
+  done <<END
+$tunnels
+END
+  # Assign the new_tunnels back to the tunnels variable
+  tunnels="$new_tunnels"
+  # Update the tunnels_file
+  save_tunnels
+}
+
+show() {
+  # Read the variables from the list_file and display with formatting
+  index=1
+  echo "wg-vpn routes"
+  echo "====================="
+  while IFS= read -r line; do
+    echo " [$index] $line"
+    index=$((index + 1))
+  done <"$tunnels_file"
+}
+
 connect() {
   # This function is responsible for connecting to the WireGuard VPN.
 
+  alignTunnels
   if [ "$_quiet" -eq 1 ]; then
     sudo wg-quick up "$_file" >/dev/null
   else
     sudo wg-quick up "$_file"
   fi
-
-  # Fill this code block from what is determined by the BE (will add the 'ip route change' commands)
-  {{ ip_route_changes }}
 }
-
 disconnect() {
   # This function is responsible for disconnecting from the WireGuard VPN.
 
@@ -68,20 +183,6 @@ install_wireguard() {
   fi
 }
 
-setup_private_key() {
-  # This function sets up the private key for the WireGuard VPN configuration.
-
-  echo "$private_key" | tee "$wireguard_package_path/private.key" >/dev/null
-  echo "Private key setup"
-}
-
-setup_public_key() {
-  # This function sets up the public key for the WireGuard VPN configuration.
-
-  echo "$public_key" | tee "$wireguard_package_path/public.key" >/dev/null
-  echo "Public key setup"
-}
-
 create_config_file() {
   # This function creates or recreates the configuration file for the WireGuard VPN.
 
@@ -95,9 +196,10 @@ create_config_file() {
   # [Interface] section
   echo "[Interface]" >>"$file"
   echo "SaveConfig = false" >>"$file"
-  echo "PrivateKey = $(cat "$wireguard_package_path/private.key")" >>"$file"
+  echo "PrivateKey = $private_key" >>"$file"
   echo "Address = $client_address" >>"$file"
   echo "MTU = 1500" >>"$file"
+  echo "PostUp = $wireguard_package_path/postUp.sh" >>"$file"
   echo "" >>"$file"
 
   # [Peer] section
@@ -116,10 +218,6 @@ install() {
   mkdir -p "$wireguard_package_path"
 
   install_wireguard
-
-  setup_private_key
-
-  setup_public_key
 
   create_config_file
 }
@@ -145,15 +243,20 @@ displayHelp() {
   echo "   wg-vpn is a WireGuard wrapper to easily run a peer with a wg-vpn server"
   echo ""
   echo "  [COMMAND]:"
-  echo "    up,UP           bring the peer VPN connection up"
-  echo "    down,DOWN       bring the peer VPN connection down"
-  echo "    uninstall       uninstall wg-vpn"
+  echo "    up,UP                bring the peer VPN connection up"
+  echo "    down,DOWN            bring the peer VPN connection down"
+  echo "    status               show status of wg-vpn service"
+  echo "    uninstall            uninstall wg-vpn"
+  echo "    reload               reload the peer VPN connection"
+  echo "    route add            Add a IP address to VPN tunnels"
+  echo "    route remove, rm     Remove a IP address from VPN tunnels"
   echo ""
   echo "  [OPTION]:"
-  echo "    -q, --quiet     produces no terminal output,"
-  echo "                    except setting bash return value \$? = 1 if failures found."
-  echo "        --version   display the version and exit"
-  echo "        --help      display this help and exit"
+  echo "    -q, --quiet          produces no terminal output,"
+  echo "                         except setting bash return value \$? = 1 if failures found."
+  echo "        --version        display the version and exit"
+  echo "        --help           display this help and exit"
+  echo "        --show           show list of IPs accessed through VPN"
   echo ""
   echo ""
   echo "  EXAMPLE(s):"
@@ -181,10 +284,33 @@ while [ $# -gt 0 ]; do
     displayVersion
     exit 0
     ;;
+  "route")
+    initialize_tunnels
+    if [ "$2" = "add" ]; then
+      add_to_tunnels "$3"
+      exit 0
+    elif [ "$2" = "remove" ]; then
+      remove_from_tunnels "$3"
+      exit 0
+    elif [ "$2" = "rm" ]; then
+      remove_from_tunnels "$3"
+      exit 0
+    elif [ "$2" = "--show" ]; then
+      show
+      exit 0
+    fi
+    echo "Unknown parameter passed: $2"
+    exit 1
+    ;;
   "up" | "UP")
     # Connect to the WireGuard VPN
+    initialize_tunnels
     connect
     exit 0
+    ;;
+  "-f" | "--file")
+    _file="$2"
+    shift
     ;;
   "down" | "DOWN")
     # Disconnect from the WireGuard VPN
@@ -194,6 +320,11 @@ while [ $# -gt 0 ]; do
   "-q" | "--quiet")
     # Enable quiet mode with no terminal output, except for failure indications
     _quiet="1"
+    ;;
+  "reload")
+    disconnect
+    connect
+    exit 0
     ;;
   "uninstall")
     # Uninstall WireGuard
@@ -220,6 +351,10 @@ if [ ! "$FILE" -ef "$wireguard_package_path/wg-vpn" ]; then
 
   # Perform installation
   install
+  
+  createPostUpScript
+
+  initialize_tunnels
 
   # Create "$wireguard_package_path/wg-vpn" file and copy the script contents to it
   touch "$wireguard_package_path/wg-vpn"
