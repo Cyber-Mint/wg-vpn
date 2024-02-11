@@ -11,8 +11,8 @@ services:
       - /home/wg-vpn/commandpipe:/home/wg-vpn/commandpipe
     environment:
       - WG_VPN_REGISTRATION_TOKEN=${WG_VPN_REGISTRATION_TOKEN}
-      - WG_VPN_ENDPOINT=${WG_VPN_ENDPOINT}
-      - WG_VPN_ALLOWED_IPS=${WG_VPN_ALLOWED_IPS}
+      - WG_VPN_ENDPOINT=${WG_VPN_ENDPOINT:-127.0.0.1}  # Used for building client wg0.conf files
+      - WG_VPN_ALLOWED_IPS=${WG_VPN_ALLOWED_IPS}       # Used for building client wg0.conf files
       - WG_VPN_SERVER_PUBLIC_KEY=${WG_VPN_SERVER_PUBLIC_KEY}
       - WG_VPN_SERVER_INTERFACE=10.8.0.1
       - WG_VPN_PACKAGE_PATH=.wireguard

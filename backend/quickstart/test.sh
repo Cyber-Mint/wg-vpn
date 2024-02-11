@@ -13,7 +13,7 @@ sigterm_handler() {
 trap 'trap " " SIGINT SIGTERM SIGHUP; kill 0; wait; sigterm_handler' SIGINT SIGTERM SIGHUP
 
 # Bring down containers in compose file
-docker compose down --remove-orphans
+docker-compose down --remove-orphans
 
 # Bring up containers in compose file
-docker compose up --build
+docker-compose up --build

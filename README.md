@@ -71,7 +71,7 @@ Usage wg-vpn [COMMAND].. [OPTION]
 
 ### Uninstalling
 
-To remove the client installation simply executing `wg-vpn uninstall` which will remove the application completely and the local user specific `wg0.conf` file.
+To remove the client installation simply execute `wg-vpn uninstall` which will remove the application completely and the local user specific `wg0.conf` file.
 <br>
 
 ---

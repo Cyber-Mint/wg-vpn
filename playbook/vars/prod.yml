@@ -4,7 +4,7 @@ vm_user: vagrant
 # Used on first_run playbook
 vm_password: "{{ lookup('ansible.builtin.env', 'VM_PASSWORD') }}"
 
-# Useful tools for sys admin
+# Necessary packages, and useful tools for system admins
 sys_packages: ['curl', 'ufw', 'tree', 'wireguard', 'net-tools']
 
 # Default docker version

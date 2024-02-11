@@ -112,6 +112,7 @@ body {
     height: 30px;
     background-color: #999999;
     padding: 0 20px;
+    border-radius: 5px;
     color: white;
     font-size: 15px;
 }
@@ -156,6 +157,7 @@ body {
     font-size: 15px;
     padding: 0 20px;
     display: flex;
+    border-radius: 5px;
     align-items: center;
  }
 

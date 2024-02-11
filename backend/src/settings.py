@@ -1,13 +1,14 @@
 import os
 import logging
 
-import pydantic
+from pydantic_settings import BaseSettings
+
 
 logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 
-class Settings(pydantic.BaseSettings):
+class Settings(BaseSettings):
     WG_VPN_REGISTRATION_TOKEN: str = os.getenv('WG_VPN_REGISTRATION_TOKEN')
     WG_VPN_ENDPOINT: str = os.getenv('WG_VPN_ENDPOINT')
     WG_VPN_ALLOWED_IPS: str = os.getenv('WG_VPN_ALLOWED_IPS')

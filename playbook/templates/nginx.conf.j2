@@ -1,20 +1,16 @@
 server {
   listen 80 default_server;
   listen [::]:80 default_server;
-
   root /var/www/html;
-
   index index.html index.htm index.nginx-debian.html;
-
   server_name _;
-
   location / {
     try_files $uri $uri/ =404;
   }
 }
 
 server {
-  server_name VPN_SERVER_NAME;
+  server_name {{ vpn_server_name }};
   server_tokens on;
   client_max_body_size 10M;
   error_log /var/log/nginx/error.log;
@@ -51,51 +47,12 @@ server {
     proxy_set_header    Referrer-Policy same-origin;
     proxy_set_header    Permissions-Policy "geolocation 'none'; camera 'none';";
   }
-
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/VPN_SERVER_NAME/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/VPN_SERVER_NAME/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
 }
+
 server {
-    server_name www.VPN_SERVER_NAME;
+    server_name www.{{ vpn_server_name }};
     server_tokens on;
     client_max_body_size 10M;
     error_log /var/log/nginx/access.log;
-    return 302 https://VPN_SERVER_NAME$request_uri;
-}
-# server {
-#     server_name www.VPN_SERVER_NAME;
-#     server_tokens on;
-#     client_max_body_size 10M;
-#     listen  443 ssl default_server;
-#     error_log /var/log/nginx/access.log;
-#     return 302 https://VPN_SERVER_NAME$request_uri;
-# }
-
-server {
-    if ($host = VPN_SERVER_NAME) {
-      return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    server_name VPN_SERVER_NAME;
-    listen 80;
-    return 404; # managed by Certbot
-
-}
-
-server {
-    if ($host = VPN_SERVER_NAME) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-
-  server_name VPN_SERVER_NAME;
-    listen 80;
-    return 404; # managed by Certbot
-
-
+    return 302 https://{{ vpn_server_name }}$request_uri;
 }
