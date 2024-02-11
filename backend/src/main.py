@@ -210,3 +210,23 @@ async def validation_exception_handler(request, exc):
     return templates.TemplateResponse(
         "400_error_message.html", context={"request": request}, headers=headers
     )
+
+
+@app.exception_handler(404)
+async def custom_http_exception_handler(request, exc):
+    """
+    Exception handler for HTTPException.
+
+    Args:
+        request: The incoming request object.
+        exc: The raised HTTPException.
+
+    Returns:
+        TemplateResponse: A template response rendering the error message with the appropriate headers and status code.
+
+    """
+    headers = getattr(exc, "headers", None)
+    return templates.TemplateResponse(
+        "404_error_page.html", context={"request": request}, headers=headers, status_code=exc.status_code
+    )
+

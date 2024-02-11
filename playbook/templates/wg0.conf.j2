@@ -5,11 +5,11 @@
 # ----------------------------------------------------------------------------------
 
 [Interface]
-PrivateKey = [wireguard_private_key]
+PrivateKey = {{ private_key['content'] | b64decode }}
 Address = 10.8.0.1/24
 ListenPort = 51820
 SaveConfig = false
-PostUp = ufw route allow in on wg0 out on [default_interface]
-PostUp = iptables -t nat -I POSTROUTING -o [default_interface] -j MASQUERADE
-PreDown = ufw route delete allow in on wg0 out on [default_interface]
-PreDown = iptables -t nat -D POSTROUTING -o [default_interface] -j MASQUERADE
+PostUp = ufw route allow in on wg0 out on {{ ansible_default_ipv4.interface }}
+PostUp = iptables -t nat -I POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+PreDown = ufw route delete allow in on wg0 out on {{ ansible_default_ipv4.interface }}
+PreDown = iptables -t nat -D POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE

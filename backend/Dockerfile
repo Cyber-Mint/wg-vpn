@@ -1,5 +1,5 @@
 # Build from Python 3.10
-FROM python:3.10-alpine
+FROM python:3.12-alpine
 
 # Set working directory to /code/
 WORKDIR /code

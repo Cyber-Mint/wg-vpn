@@ -7,19 +7,12 @@
 
 - name: Copy nginx config to server
   become: true
-  ansible.builtin.copy:
-    src: templates/nginx.conf
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2
     dest: /etc/nginx/sites-available/default
     owner: www-data
     group: www-data
     mode: '0644'
-
-- name: Replace 'VPN_SERVER_NAME' in conf with domain name
-  become: true
-  ansible.builtin.replace:
-    path: /home/docker-compose.yml
-    regexp: 'VPN_SERVER_NAME'
-    replace: '{{ vpn_server_name }}'
 
 - name: Create a folder for custom error pages
   become: true

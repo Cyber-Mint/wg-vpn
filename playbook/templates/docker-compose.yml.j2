@@ -1,0 +1,22 @@
+---
+version: "3.2"
+
+services:
+  wg_vpn:
+    image: cybermint/wg-vpn:{{ vpn_version }}
+    container_name: wg-vpn
+    volumes:
+      - /etc/wireguard/:/etc/wireguard/
+      - /home/wg-vpn/commandpipe:/home/wg-vpn/commandpipe
+    environment:
+      - WG_VPN_REGISTRATION_TOKEN={{ vpn_registration_token.stdout }}
+      - WG_VPN_ENDPOINT={{ vpn_endpoint }}
+      - WG_VPN_ALLOWED_IPS={{ vpn_allowed_ips }}
+      - WG_VPN_SERVER_PUBLIC_KEY={{ public_key['content'] | b64decode }}
+      - WG_VPN_SERVER_INTERFACE={{ vpn_server_interface_private_address }}
+      - WG_VPN_PACKAGE_PATH={{ vpn_package_path }}
+      - WG_VPN_SERVER_HOST={{ vpn_server_host }}
+    restart: always
+    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - '127.0.0.1:8000:8000'
