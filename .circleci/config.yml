@@ -91,7 +91,61 @@ jobs:
           command: |
             docker run -v ~/repo:/path zricethezav/gitleaks:latest detect --source="/path" -v
 
-  linting:
+  flake8:
+    docker:
+      - image: python@sha256:364ee1a9e029fb7b60102ae56ff52153ccc929ceab9aa387402fe738432d24cc
+    resource_class: small
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+      - run:
+          name: Install Python
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install flake8
+      - save_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+          paths:
+            - ".venv"
+      - run:
+          name: Lint BackEnd with flake8
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            cd ~/repo/backend/src
+            flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  ansible-lint:
+    docker:
+      - image: python@sha256:364ee1a9e029fb7b60102ae56ff52153ccc929ceab9aa387402fe738432d24cc
+    resource_class: small
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+      - run:
+          name: Install Python
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install ansible ansible-lint
+      - save_cache:
+          key: deps1-{{ .Environment.CACHE_VERSION }}
+          paths:
+            - ".venv"
+      - run:
+          name: Lint playbook with ansible lint
+          command: |
+            . .venv/bin/activate
+            cd ~/repo/playbook/
+            ansible-lint
+
+  yamllint:
     docker:
       - image: python@sha256:364ee1a9e029fb7b60102ae56ff52153ccc929ceab9aa387402fe738432d24cc
     resource_class: small
@@ -104,38 +158,10 @@ jobs:
             export DEBIAN_FRONTEND='noninteractive'
             apt-get update
             apt-get install -y yamllint
-      - restore_cache:
-          key: deps1-{{ .Environment.CACHE_VERSION }}
-      - run:
-          name: Install Python
-          command: |
-            python3 -m venv .venv
-            . .venv/bin/activate
-            pip install ansible ansible-lint flake8
-      - save_cache:
-          key: deps1-{{ .Environment.CACHE_VERSION }}
-          paths:
-            - ".venv"
-      - run:
-          name: Lint playbook with ansible lint
-          command: |
-            python3 -m venv .venv
-            . .venv/bin/activate
-            ansible-lint --version
-            cd ~/repo/playbook/
-            ansible-lint
       - run:
           name: Lint repo with yamllint
           command: |
             yamllint -c .yamllint.conf .
-      - run:
-          name: Lint BackEnd with flake8
-          command: |
-            python3 -m venv .venv
-            . .venv/bin/activate
-            cd ~/repo/backend/src
-            flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
-            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   publish-wg-vpn:
     machine:
@@ -161,7 +187,9 @@ workflows:
   version: 2
   untagged_build_test:
     jobs:
-      - linting
+      - ansible-lint
+      - flake8
+      - yamllint
       - integration-tests
       - git-leaks
       - checkov
