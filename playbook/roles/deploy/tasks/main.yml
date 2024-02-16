@@ -30,8 +30,18 @@
   ansible.builtin.include_tasks:
     file: align-server-peers.yml
 
-- name: Print out WG_VPN_REGISTRATION_TOKEN variable
+- name: Print out new WG_VPN_REGISTRATION_TOKEN variable
   ansible.builtin.debug:
     msg: >
-      WG_VPN_REGISTRATION_TOKEN is:
+      New VPN Registeration token is:
       >>>>>>>>>>> {{ vpn_registration_token.stdout }} <<<<<<<<<<<
+
+      (To persist this token, set VPN_ROTATE_REGISTRATION_TOKEN=False in your deploy)
+  when: vpn_rotate_registration_token
+
+- name: Print out persisted WG_VPN_REGISTRATION_TOKEN variable
+  ansible.builtin.debug:
+    msg: >
+      VPN Registeration token reused:
+      >>>>>>>>>>> {{ vpn_registration_token.stdout }} <<<<<<<<<<<
+  when: vpn_rotate_registration_token
