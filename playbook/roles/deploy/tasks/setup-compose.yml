@@ -9,7 +9,7 @@
 
 - name: Persist wireguard registration token, and read into var
   ansible.builtin.shell:
-    cmd: grep "WG_VPN_REGISTRATION_TOKEN=" /home/docker-compose.yml | awk -F "=" '{print $2}'
+    cmd: set -o pipefail && grep "WG_VPN_REGISTRATION_TOKEN=" /home/docker-compose.yml | awk -F "=" '{print $2}'
     executable: /bin/bash
   register: vpn_registration_token
   changed_when: true
