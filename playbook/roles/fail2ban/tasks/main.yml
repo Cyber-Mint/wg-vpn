@@ -15,7 +15,7 @@
 - name: Fail2ban | Copy nginx-chancers config to server
   become: true
   ansible.builtin.copy:
-    src: templates/nginx-chancers.conf
+    src: templates/nginx/nginx-chancers.conf
     dest: /etc/fail2ban/filter.d/nginx-chancers.conf
     mode: '0644'
 

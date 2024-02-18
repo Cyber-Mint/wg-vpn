@@ -8,7 +8,7 @@
 - name: Nginx | Copy nginx config to server
   become: true
   ansible.builtin.template:
-    src: "templates/{{ nginx_config_file }}"
+    src: "templates/nginx/{{ nginx_config_file }}"
     dest: /etc/nginx/sites-available/default
     owner: www-data
     group: www-data
