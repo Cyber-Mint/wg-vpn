@@ -1,11 +1,11 @@
 ---
-- name: Read remote Private key into var
+- name: Setup Wireguard config | Read remote Private key into var
   become: true
   ansible.builtin.slurp:
     src: /etc/wireguard/private.key
   register: private_key
 
-- name: Copy Wireguard config file to server
+- name: Setup Wireguard config | Copy Wireguard config file to server
   become: true
   ansible.builtin.template:
     src: templates/wg0.conf.j2
@@ -14,7 +14,7 @@
     group: root
     mode: '0040'
 
-- name: Set and reload System-control IPv4 forwarding
+- name: Setup Wireguard config | Set and reload System-control IPv4 forwarding
   become: true
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward

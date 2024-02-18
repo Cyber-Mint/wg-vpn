@@ -1,16 +1,16 @@
 ---
-- name: Update apt cache
+- name: Install docker | Update apt cache
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
   become: true
 
-- name: Upgrade all apt packages
+- name: Install docker | Upgrade all apt packages
   ansible.builtin.apt:
     upgrade: dist
   become: true
 
-- name: Install system dependencies
+- name: Install docker | Install system dependencies
   become: true
   ansible.builtin.apt:
     name: "{{ packages }}"
@@ -24,19 +24,19 @@
       - software-properties-common
       - gnupg-agent
 
-- name: Add an apt signing key for Docker
+- name: Install docker | Add an apt signing key for Docker
   become: true
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add apt repository for stable version
+- name: Install docker | Add apt repository for stable version
   become: true
   ansible.builtin.apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
     state: present
 
-- name: Install Docker
+- name: Install docker | Install Docker
   become: true
   ansible.builtin.apt:
     name: "{{ packages }}"
@@ -48,7 +48,7 @@
       - docker-ce-cli
       - containerd.io
 
-- name: Install Docker-Compose
+- name: Install docker | Install Docker-Compose
   become: true
   ansible.builtin.apt:
     name: "{{ packages }}"
@@ -58,19 +58,19 @@
     packages:
       - docker-compose
 
-- name: Create config folder for doctl
+- name: Install docker | Create config folder for doctl
   become: true
   ansible.builtin.file:
     path: /root/.config
     state: directory
     mode: "0644"
 
-- name: Install doctl (used to auth with Digital Ocean)
+- name: Install docker | Install doctl (used to auth with Digital Ocean)
   become: true
   community.general.snap:
     name: doctl
 
-- name: Connect doctl with docker
+- name: Install docker | Connect doctl with docker
   become: true
   ansible.builtin.command: snap connect doctl:dot-docker
   register: docker_connect_doct
