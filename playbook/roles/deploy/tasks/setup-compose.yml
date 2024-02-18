@@ -1,11 +1,8 @@
 ---
-- name: Generate wireguard registration token, and read into var
-  ansible.builtin.shell:
-    cmd: set -o pipefail && tr -dc A-Za-z0-9 </dev/urandom | head -c 25; echo ''
-    executable: /bin/bash
-  register: vpn_registration_token
-  changed_when: true
-  when: vpn_rotate_registration_token
+- name: Check if file exists
+  ansible.builtin.stat:
+    path: /home/docker-compose.yml
+  register: file_status
 
 - name: Persist wireguard registration token, and read into var
   ansible.builtin.shell:
@@ -13,7 +10,15 @@
     executable: /bin/bash
   register: vpn_registration_token
   changed_when: true
-  when: not vpn_rotate_registration_token
+  when: not vpn_rotate_registration_token and file_status == true
+
+- name: Generate wireguard registration token, and read into var
+  ansible.builtin.shell:
+    cmd: set -o pipefail && tr -dc A-Za-z0-9 </dev/urandom | head -c 25; echo ''
+    executable: /bin/bash
+  register: vpn_registration_token
+  changed_when: true
+  when: vpn_rotate_registration_token or file_status == false
 
 - name: Read remote Public key into var
   become: true
