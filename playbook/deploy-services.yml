@@ -1,0 +1,9 @@
+---
+- name: Deploy Production (services only)
+  hosts: wireguard_server
+  gather_facts: true
+  vars_files:
+    - vars/prod.yml
+
+  roles:
+    - role: deploy
