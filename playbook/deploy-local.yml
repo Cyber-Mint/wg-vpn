@@ -8,6 +8,6 @@
   roles:
     - role: run_first
     - role: fail2ban
-    - role: nginx_local
+    - role: nginx
     - role: docker
     - role: deploy

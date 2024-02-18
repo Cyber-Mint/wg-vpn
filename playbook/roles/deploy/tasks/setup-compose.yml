@@ -10,7 +10,7 @@
     executable: /bin/bash
   register: vpn_registration_token
   changed_when: true
-  when: not vpn_rotate_registration_token and file_status == true
+  when: not vpn_rotate_registration_token and file_status
 
 - name: Setup Compose | Generate wireguard registration token, and read into var
   ansible.builtin.shell:
@@ -18,7 +18,7 @@
     executable: /bin/bash
   register: vpn_registration_token
   changed_when: true
-  when: vpn_rotate_registration_token or file_status == false
+  when: vpn_rotate_registration_token or not file_status
 
 - name: Setup Compose | Read remote Public key into var
   become: true
