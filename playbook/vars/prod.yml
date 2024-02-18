@@ -7,6 +7,9 @@ vm_password: "{{ lookup('ansible.builtin.env', 'VM_PASSWORD') }}"
 # Necessary packages, and useful tools for system admins
 sys_packages: ['curl', 'ufw', 'tree', 'wireguard', 'net-tools']
 
+# Nginx config file template
+nginx_config_file: "nginx.conf.j2"
+
 # Default docker version
 vpn_version: "{{ lookup('ansible.builtin.env', 'VPN_VERSION', default='latest') }}"
 
