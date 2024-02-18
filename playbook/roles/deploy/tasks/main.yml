@@ -33,7 +33,7 @@
 - name: Print out new WG_VPN_REGISTRATION_TOKEN variable
   ansible.builtin.debug:
     msg: >
-      New VPN Registeration token is:
+      New VPN Registration token is:
       >>>>>>>>>>> {{ vpn_registration_token.stdout }} <<<<<<<<<<<
 
       (To persist this token, set VPN_ROTATE_REGISTRATION_TOKEN=False in your deploy)
@@ -42,6 +42,6 @@
 - name: Print out persisted WG_VPN_REGISTRATION_TOKEN variable
   ansible.builtin.debug:
     msg: >
-      VPN Registeration token reused:
+      Reused VPN Registration token:
       >>>>>>>>>>> {{ vpn_registration_token.stdout }} <<<<<<<<<<<
   when: vpn_rotate_registration_token
