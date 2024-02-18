@@ -19,7 +19,10 @@ export VPN_ENDPOINT=vpn.my.domain:51820
 export VPN_SERVER_NAME=vpn.my.domain
 export VPN_WEBSERVER_EMAIL=info@my.domain.com
 export VPN_SERVER_HOST=https://vpn.my.domain
+export VPN_ROTATE_REGISTRATION_TOKEN=<boolean>
 ```
+> For more on what these environment variables do and mean, see [here](./environment_variables.md).
+
 > Note: Allowed IPs are the individual IP addresses, comma separated such as `132.23.442.234, 132.233.42.24, 8.8.8.8` or IP subnet masks such as `10.50.0.0/24` or all addresses using `0.0.0.0/0` that clients will access via the VPN.
 
 - [Install `ansible`](./install_ansible.md) and required dependencies for running the playbook. 

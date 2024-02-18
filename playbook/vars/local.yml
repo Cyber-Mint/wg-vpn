@@ -7,6 +7,9 @@ vm_password: "{{ lookup('ansible.builtin.env', 'VM_PASSWORD') }}"
 # Necessary packages, and useful tools for system admins
 sys_packages: ['curl', 'ufw', 'tree', 'wireguard', 'net-tools']
 
+# Nginx config file template
+nginx_config_file: "nginx.local.conf"
+
 # Default docker version
 vpn_version: "{{ lookup('ansible.builtin.env', 'LOCAL_VPN_VERSION', default='latest') }}"
 
@@ -30,3 +33,7 @@ vpn_webserver_email: "{{ lookup('ansible.builtin.env', 'LOCAL_VPN_WEBSERVER_EMAI
 
 # Used by FASTAPI. The domain name and protocol of your server
 vpn_server_host: "{{ lookup('ansible.builtin.env', 'LOCAL_VPN_SERVER_HOST') }}"
+
+# Used to either generate a new registration token on redeploys, or persist it. [Boolean - true or false]
+vpn_rotate_registration_token: \
+  {{ ((lookup('ansible.builtin.env', 'LOCAL_VPN_ROTATE_REGISTRATION_TOKEN', default=True) | lower) == 'true') | bool }}

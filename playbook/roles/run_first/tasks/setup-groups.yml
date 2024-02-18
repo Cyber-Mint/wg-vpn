@@ -1,5 +1,5 @@
 ---
-- name: Use passwordless sudo
+- name: Setup server users and groups | Use passwordless sudo
   become: true
   run_once: true
   ansible.legacy.lineinfile:
@@ -9,25 +9,25 @@
     line: '%sudo ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
 
-- name: Add a wheel group (where we keep sudoers)
+- name: Setup server users and groups | Add a wheel group (where we keep sudoers)
   become: true
   ansible.legacy.group:
     name: wheel
     state: present
 
-- name: Add a docker group
+- name: Setup server users and groups | Add a docker group
   become: true
   ansible.legacy.group:
     name: docker
     state: present
 
-- name: Add a vm_user group
+- name: Setup server users and groups | Add a vm_user group
   become: true
   ansible.legacy.group:
     name: "{{ lookup('env', 'VM_USER') or vm_user }}"
     state: present
 
-- name: Add wheel group to sudoers
+- name: Setup server users and groups | Add wheel group to sudoers
   become: true
   ansible.legacy.lineinfile:
     dest: /etc/sudoers
@@ -36,7 +36,7 @@
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
 
-- name: Add vm_user to wheel group
+- name: Setup server users and groups | Add vm_user to wheel group
   become: true
   ansible.legacy.user:
     name: "{{ lookup('env', 'VM_USER') or vm_user }}"

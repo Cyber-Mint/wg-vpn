@@ -1,39 +1,39 @@
 ---
-- name: Install fail2ban
+- name: Fail2ban | Install fail2ban
   become: true
   ansible.builtin.apt:
     name: fail2ban
     state: present
 
-- name: Copy portscan config to server
+- name: Fail2ban | Copy portscan config to server
   become: true
   ansible.builtin.copy:
-    src: templates/portscan.conf
+    src: templates/fail2ban/portscan.conf
     dest: /etc/fail2ban/filter.d/portscan.conf
     mode: '0644'
 
-- name: Copy nginx-chancers config to server
+- name: Fail2ban | Copy nginx-chancers config to server
   become: true
   ansible.builtin.copy:
-    src: templates/nginx-chancers.conf
+    src: templates/fail2ban/nginx-chancers.conf
     dest: /etc/fail2ban/filter.d/nginx-chancers.conf
     mode: '0644'
 
-- name: Copy ufw config to server
+- name: Fail2ban | Copy ufw config to server
   become: true
   ansible.builtin.copy:
-    src: templates/ufw-ps.conf
+    src: templates/fail2ban/ufw-ps.conf
     dest: /etc/fail2ban/action.d/ufw-ps.conf
     mode: '0644'
 
-- name: Copy jail config to server
+- name: Fail2ban | Copy jail config to server
   become: true
   ansible.builtin.copy:
-    src: templates/jail.local
+    src: templates/fail2ban/jail.local
     dest: /etc/fail2ban/jail.local
     mode: '0644'
 
-- name: Reload fail2ban to activate
+- name: Fail2ban | Reload fail2ban to activate
   become: true
   ansible.builtin.service:
     name: fail2ban

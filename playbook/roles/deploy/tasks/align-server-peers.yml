@@ -1,5 +1,5 @@
 ---
-- name: Copy align-peers.py to server
+- name: Align server peers | Copy align-peers.py to server
   become: true
   ansible.builtin.copy:
     src: utils/align-peers.py
@@ -8,7 +8,7 @@
     group: root
     mode: '0755'
 
-- name: Copy align-peers.sh to server
+- name: Align server peers | Copy align-peers.sh to server
   become: true
   ansible.builtin.copy:
     src: utils/align-peers.sh
@@ -17,7 +17,7 @@
     group: root
     mode: '0755'
 
-- name: Ensure peers.txt exists on server
+- name: Align server peers | Ensure peers.txt exists on server
   become: true
   ansible.builtin.copy:
     content: ""
@@ -27,7 +27,7 @@
     owner: root
     mode: '0644'
 
-- name: Run align-peers.py
+- name: Align server peers | Run align-peers.py
   become: true
   ansible.builtin.shell: /home/align-peers.sh
   args:

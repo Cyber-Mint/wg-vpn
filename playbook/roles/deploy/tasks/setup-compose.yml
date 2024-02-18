@@ -1,18 +1,32 @@
 ---
-- name: Generate wireguard server token, and read into var
+- name: Setup Compose | Check if file exists
+  ansible.builtin.stat:
+    path: /home/docker-compose.yml
+  register: file_status
+
+- name: Setup Compose | Persist wireguard registration token, and read into var
+  ansible.builtin.shell:
+    cmd: set -o pipefail && grep "WG_VPN_REGISTRATION_TOKEN=" /home/docker-compose.yml | awk -F "=" '{print $2}'
+    executable: /bin/bash
+  register: vpn_registration_token
+  changed_when: true
+  when: not vpn_rotate_registration_token and file_status
+
+- name: Setup Compose | Generate wireguard registration token, and read into var
   ansible.builtin.shell:
     cmd: set -o pipefail && tr -dc A-Za-z0-9 </dev/urandom | head -c 25; echo ''
     executable: /bin/bash
   register: vpn_registration_token
   changed_when: true
+  when: vpn_rotate_registration_token or not file_status
 
-- name: Read remote Public key into var
+- name: Setup Compose | Read remote Public key into var
   become: true
   ansible.builtin.slurp:
     src: /etc/wireguard/public.key
   register: public_key
 
-- name: Copy over Backend Docker-compose file
+- name: Setup Compose | Copy over Backend Docker-compose file
   become: true
   ansible.builtin.template:
     src: templates/docker-compose.yml.j2

@@ -1,17 +1,17 @@
 ---
-- name: Install Prerequisites
+- name: Conclude default packages | Install Prerequisites
   become: true
   ansible.builtin.apt:
     name: aptitude
     update_cache: true
     force_apt_get: true
 
-- name: Update apt and install default packages
+- name: Conclude default packages | Update apt and install default packages
   become: true
   ansible.builtin.apt:
     update_cache: true
 
-- name: Install required system packages
+- name: Conclude default packages | Install required system packages
   become: true
   ansible.builtin.apt:
     name: "{{ sys_packages }}"

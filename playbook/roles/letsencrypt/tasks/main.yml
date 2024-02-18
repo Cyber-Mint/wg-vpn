@@ -1,25 +1,25 @@
 ---
-- name: Reload nginx to activate the websites
+- name: Letsencrypt | Reload nginx to activate the websites
   become: true
   ansible.builtin.service:
     name: nginx
     state: restarted
 
-- name: Install letsencrypt
+- name: Letsencrypt | Install letsencrypt
   become: true
   community.general.snap:
     name: certbot
     classic: true
     state: present
 
-- name: Link snap to /usr/bin
+- name: Letsencrypt | Link snap to /usr/bin
   become: true
   ansible.builtin.file:
     src: /snap/bin/certbot
     dest: /usr/bin/certbot
     state: link
 
-- name: Create letsencrypt certificate for {{ vpn_server_name }}
+- name: Letsencrypt | Create letsencrypt certificate for {{ vpn_server_name }}
   become: true
   ansible.builtin.command: >
     certbot --nginx -m {{ vpn_webserver_email }}
@@ -28,7 +28,7 @@
   register: letsencrypt_resigned_certificate
   changed_when: letsencrypt_resigned_certificate.stdout == "0"
 
-- name: Add Cronjob for Certificate Auto Renewal
+- name: Letsencrypt | Add Cronjob for Certificate Auto Renewal
   become: true
   ansible.builtin.cron:
     name: letsencrypt_renewal
@@ -36,13 +36,13 @@
     job: "/usr/bin/certbot renew"
   when: ansible_facts['os_family'] == "Debian"
 
-- name: Reload nginx to activate the websites
+- name: Letsencrypt | Reload nginx to activate the websites
   become: true
   ansible.builtin.service:
     name: nginx
     state: restarted
 
-- name: Reboot the host
+- name: Letsencrypt | Reboot the host
   become: true
   ansible.builtin.reboot:
     reboot_timeout: 3600

@@ -1,5 +1,5 @@
 ---
-- name: Ensure Wireguard in on latest version
+- name: Check wireguard service | Ensure Wireguard in on latest version
   become: true
   ansible.builtin.apt:
     name: wireguard
@@ -7,13 +7,13 @@
     update_cache: true
     force_apt_get: true
 
-- name: Check if Wireguard Private key exists on server
+- name: Check wireguard service | Check if Wireguard Private key exists on server
   become: true
   ansible.builtin.stat:
     path: /etc/wireguard/private.key
   register: private_key
 
-- name: Report missing File, stop deploying
+- name: Check wireguard service | Report missing File, stop deploying
   ansible.builtin.fail:
     msg: >
       Server does not have a wireguard private key present.
