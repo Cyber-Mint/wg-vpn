@@ -2,8 +2,9 @@
 
 **VPN_ROTATE_REGISTRATION_TOKEN**:<br>
 _Boolean_<br>
-This variable determines if you want to persist for same registration token through different deployments, 
-or generate a new token after each deployment.
+This variable determines if you want to persist for same registration token through different deployments,
+or generate a new token after each deployment. If set to true (default), a new token will be generated on
+each deploy.
 
 **VPN_VERSION**:<br>
 _Floating point number_<br>
@@ -24,15 +25,18 @@ peer to tunnel through the VPN to get to.
 
 **VPN_ENDPOINT**:<br>
 _String (IP:port)_<br>
-This variable is used by the backend service when generating a wg0.conf templated file. This is set as the peer's endpoint
+This variable is used by the backend service when generating a wg0.conf templated file. This is set as the peer's
+endpoint
 for tunnel traffic through the server
 
 **VPN_SERVER_HOST**:<br>
 _String (proto://IP)_<br>
-This variable is used for generating the redirect on the FE page. i.e. After the FE validates a request with the registration
-token, and returns a cURL to download the wg0 config, this is the host that will provide the static asset for downloading.
+This variable is used for generating the redirect on the FE page. i.e. After the FE validates a request with the
+registration
+token, and returns a cURL to download the wg0 config, this is the host that will provide the static asset for
+downloading.
 
 **VPN_SERVER_NAME & VPN_WEBSERVER_EMAIL**:<br>
 _String_<br>
-These variables are used by the NGINX role. `VPN_SERVER_NAME` is the domain name of your WG-VPN server, 
+These variables are used by the NGINX role. `VPN_SERVER_NAME` is the domain name of your WG-VPN server,
 and `VPN_WEBSERVER_EMAIL` is your administrator's email address.
