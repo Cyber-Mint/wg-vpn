@@ -1,5 +1,5 @@
 ---
-- name: Ensure Wireguard in on latest version
+- name: Setup Wireguard | Ensure Wireguard in on latest version
   become: true
   ansible.builtin.apt:
     name: wireguard
@@ -7,13 +7,13 @@
     update_cache: true
     force_apt_get: true
 
-- name: Check if Wireguard Private key exists on server
+- name: Setup Wireguard | Check if Wireguard Private key exists on server
   become: true
   ansible.builtin.stat:
     path: /etc/wireguard/private.key
   register: private_key
 
-- name: Create new Wireguard private key, if does not exist
+- name: Setup Wireguard | Create new Wireguard private key, if does not exist
   become: true
   ansible.builtin.shell: umask 077; wg genkey > private.key
   args:
@@ -21,19 +21,19 @@
     creates: /etc/wireguard/public.key
   when: not private_key.stat.exists
 
-- name: Set Wireguard Private key permissions
+- name: Setup Wireguard | Set Wireguard Private key permissions
   ansible.builtin.command: "sudo chmod go= /etc/wireguard/private.key"
   when: not private_key.stat.exists
   register: generated_new_private_key
   changed_when: not private_key.stat.exists
 
-- name: Check if Wireguard Public key exists on server
+- name: Setup Wireguard | Check if Wireguard Public key exists on server
   become: true
   ansible.builtin.stat:
     path: /etc/wireguard/public.key
   register: public_key
 
-- name: Create new Wireguard Public key, if does not exist
+- name: Setup Wireguard | Create new Wireguard Public key, if does not exist
   become: true
   ansible.builtin.shell: sudo wg pubkey < private.key > public.key
   args:
